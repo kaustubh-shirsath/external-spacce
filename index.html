@@ -336,6 +336,31 @@ a{color:var(--brand);text-decoration:none}
         </tbody>
       </table>
     </div>
+
+    <div class="panel">
+      <div class="ptitle">Waiver Threshold</div>
+      <table class="tbl" style="max-width:560px">
+        <thead><tr><th></th><th class="r">Late Interest %</th><th class="r">Late Penalty %</th></tr></thead>
+        <tbody>
+          <tr><td>Current Month's Threshold</td><td class="r">0 - 0</td><td class="r">0 - 0</td></tr>
+          <tr><td>June's Highest Waiver</td><td class="r">0</td><td class="r">0</td></tr>
+          <tr><td>May's Highest Waiver</td><td class="r">0</td><td class="r">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="ptitle" style="margin:0">Agent's Notepad</div>
+        <button class="nbtn primary" onclick="openNotepad()">＋ Add Note</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Date</th><th>Agent Name</th><th>Communication Mode</th><th>Category Code</th><th>Comments</th><th class="r">Amount Promised</th><th>Followup Date</th></tr></thead>
+        <tbody id="notepadBody">
+          <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">No Data found</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- repayments -->
@@ -576,25 +601,71 @@ function closeMenu(){const m=document.getElementById('raMenu');if(m)m.classList.
 function payAction(kind){closeMenu();toast('Payment initiated — '+kind);}
 
 // ===== modals =====
+// Upload Feedback = bulk upload via fileops
 function openFeedback(){
   document.getElementById('modalMount').innerHTML=`
   <div class="overlay" onclick="if(event.target===this)closeModal()">
     <div class="modal">
+      <button class="pop-x" style="position:absolute;top:16px;right:20px;font-size:20px" onclick="closeModal()">&times;</button>
       <h3>Upload Feedback</h3>
-      <div class="msub">Bulk Collection Notes · maps to BULK_COLLECTION_NOTES</div>
-      <div class="field"><label>UUID</label><input value="0b5a5101-288e-42de-8637-07ca746e75e1"></div>
-      <div class="field"><label>Reason</label>
-        <select><option>PTP - Promise to Pay</option><option>RTP - Refuse to Pay</option><option>Not Reachable</option><option>Dispute</option></select></div>
-      <div class="field"><label>Added By</label><input value="agency.admin" readonly></div>
-      <div class="field"><label>Comments</label><textarea placeholder="Interaction remarks…"></textarea></div>
-      <div class="field"><label>Comms Mode</label>
-        <select><option>Call</option><option>WhatsApp</option><option>Field Visit</option><option>SMS</option></select></div>
-      <div class="field"><label>Category Code</label>
-        <select><option>CC_COLLECTION</option><option>CC_SETTLEMENT</option><option>CC_DISPUTE</option></select></div>
-      <div class="field"><label>Follow-up Date</label><input type="date" value="2026-07-05"></div>
+      <div class="msub">Bulk upload via FileOps · maps to BULK_COLLECTION_NOTES</div>
+      <div style="background:#F6F3FF;border:1px solid var(--brand-ln);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--ink2);margin-bottom:14px">
+        CSV columns: <code style="background:#fff;padding:1px 5px;border-radius:4px">uuid, reason, addedBy, comments, commsMode, categoryCode, followUpDate</code>
+      </div>
+      <div class="field"><label>Template</label>
+        <button class="btn ghost" onclick="downloadFeedbackTemplate()">&#8681; Download CSV template</button></div>
+      <div class="field"><label>Upload File <span style="color:var(--red)">*</span></label>
+        <input id="fbFile" type="file" accept=".csv"></div>
       <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button>
-        <button class="btn primary" onclick="closeModal();toast('Feedback uploaded')">Submit</button></div>
+        <button class="btn primary" onclick="submitFeedbackFile()">Upload</button></div>
     </div></div>`;
+}
+function downloadFeedbackTemplate(){
+  const csv='uuid,reason,addedBy,comments,commsMode,categoryCode,followUpDate\n';
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='bulk_collection_notes_template.csv';a.click();URL.revokeObjectURL(url);
+  toast('Template downloaded');
+}
+function submitFeedbackFile(){
+  const f=document.getElementById('fbFile').files[0];
+  if(!f){toast('Choose a CSV file');return;}
+  closeModal();toast('Uploaded '+f.name+' via FileOps');
+}
+
+// Agent's Notepad — single note entry
+function openNotepad(){
+  document.getElementById('modalMount').innerHTML=`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:440px">
+      <button class="pop-x" style="position:absolute;top:16px;right:20px;font-size:20px" onclick="closeModal()">&times;</button>
+      <h3>NotePad</h3>
+      <div class="msub">UUID : eabb9a80-7256-11ec-87f0-7b23ad8077b7</div>
+      <div class="field"><label>Communication Mode <span style="color:var(--red)">*</span></label>
+        <select id="npMode"><option>TELE_CALLING</option><option>WHATSAPP</option></select></div>
+      <div class="field"><label>Category <span style="color:var(--red)">*</span></label>
+        <select id="npCat">
+          <option>RINGING NOT RESPONDING (RNR)</option>
+          <option>Refused to pay (RTP)</option>
+          <option>Skip (SKIP)</option>
+          <option>Abusive Customer (DNC)</option>
+          <option>Voicemail (Voicemail)</option>
+          <option>Amount Paid (PAID)</option>
+        </select></div>
+      <div class="field"><label>Comments <span style="color:var(--red)">*</span></label>
+        <textarea id="npComments" placeholder="Add your comments here"></textarea></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="document.getElementById('npComments').value=''">Clear</button>
+        <button class="btn primary" onclick="submitNote()">Submit</button></div>
+    </div></div>`;
+}
+function submitNote(){
+  const mode=document.getElementById('npMode').value, cat=document.getElementById('npCat').value;
+  const c=document.getElementById('npComments').value.trim();
+  if(!c){toast('Add a comment');return;}
+  const tb=document.getElementById('notepadBody');
+  if(tb.querySelector('td[colspan]')) tb.innerHTML='';
+  const row=`<tr><td>1st Jul 2026, 5:15 PM</td><td>agency.admin</td><td>${mode}</td><td>${cat}</td><td>${c}</td><td class="r">-</td><td>-</td></tr>`;
+  tb.insertAdjacentHTML('afterbegin',row);
+  closeModal();toast('Note added');
 }
 function openPayLink(){
   closeMenu();
