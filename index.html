@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>External SpaCCe — Agency Portal</title>
+<style>
+:root{
+  --bg:#F4F5FA; --surface:#fff; --line:#ECEEF5; --line2:#F1F2F8;
+  --ink:#1E2233; --ink2:#3A4055; --muted:#8A90A6; --faint:#A8AEC0;
+  --brand:#5B4FE8; --brand-d:#4A3FD0; --brand-bg:#F3EEFF; --brand-ln:#E3DCFB;
+  --green:#0A7C4E; --green-bg:#E8F7F0; --amber:#B45309; --red:#BE1D1D; --red-bg:#FEF0F0; --purple:#6B21A8;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+body{background:var(--bg);color:var(--ink);font-size:14px}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.hidden{display:none!important}
+a{color:var(--brand);text-decoration:none}
+
+/* ===== nav ===== */
+.nav{display:flex;align-items:center;gap:18px;padding:12px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px}
+.logo .dot{width:25px;height:25px;border-radius:50%;background:linear-gradient(135deg,#6C5CE7,#8E7BFB)}
+.pill{border:1px solid #D9DCEA;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--brand)}
+.navlink{font-size:14px;color:var(--ink2);font-weight:600;padding:6px 4px;border-bottom:2px solid transparent}
+.navlink.active{color:var(--brand);border-bottom-color:var(--brand)}
+.nbtn{border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.nbtn.primary{background:var(--brand);color:#fff}
+.nbtn.primary:hover{background:var(--brand-d)}
+.nbtn.ghost{background:#fff;color:var(--brand);border:1.5px solid #D9DCEA}
+.nbtn.ghost:hover{border-color:var(--brand)}
+.sp{flex:1}
+.tag-admin{background:var(--brand-bg);color:var(--purple);font-weight:800;font-size:10.5px;padding:4px 10px;border-radius:20px;letter-spacing:.06em}
+.user{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);font-weight:600}
+.avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6C5CE7,#8E7BFB)}
+
+.page{max-width:1320px;margin:0 auto;padding:22px 22px 80px}
+
+/* ===== search ===== */
+.topsearch{display:flex;justify-content:center;margin-bottom:22px}
+.search{width:760px;max-width:100%;display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #D9DCEA;border-radius:30px;padding:12px 20px;box-shadow:0 4px 18px rgba(91,79,232,.06)}
+.search:focus-within{border-color:var(--brand)}
+.search .mag{width:17px;height:17px;border:2px solid #B7BCCB;border-radius:50%;position:relative;flex:none}
+.search .mag:after{content:'';position:absolute;width:7px;height:2px;background:#B7BCCB;transform:rotate(45deg);bottom:-2px;right:-4px;border-radius:2px}
+.search input{border:none;outline:none;flex:1;font-size:15px;color:var(--ink);background:none}
+.search input::placeholder{color:var(--faint)}
+
+.h1{font-size:15px;font-weight:800;margin-bottom:2px}
+.sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;position:relative;margin-bottom:16px}
+.ptitle{font-size:15px;font-weight:800;margin-bottom:14px}
+
+/* ===== tables ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.tbl th.r,.tbl td.r{text-align:right;font-variant-numeric:tabular-nums}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line2);color:var(--ink2)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:#FAFAFE}
+.bktcell{font-weight:800;letter-spacing:.04em;display:inline-flex;align-items:center;gap:8px}
+.b0{color:var(--green)}.b1{color:#2156E8}.b2{color:var(--amber)}.b3{color:var(--red)}.b4{color:#7A2E9C}
+.info{width:18px;height:18px;border-radius:50%;border:1.4px solid #C3C8D8;color:var(--muted);font-size:11px;font-weight:800;font-style:italic;display:inline-flex;align-items:center;justify-content:center;font-family:Georgia,serif;cursor:pointer}
+.info:hover,.info.on{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
+.tbl tr.total td{background:var(--brand-bg);font-weight:800;color:var(--ink);border-top:2px solid var(--brand-ln);border-bottom:none}
+.tbl tr.total .bktcell{color:var(--brand)}
+
+/* popover */
+.pop{position:absolute;width:290px;background:#fff;border:1px solid var(--brand-ln);border-radius:12px;box-shadow:0 12px 34px rgba(30,34,51,.18);padding:14px 16px;z-index:20}
+.pop-h{font-size:13.5px;font-weight:800;margin-bottom:2px}
+.pop-s{font-size:11px;color:var(--muted);margin-bottom:10px}
+.pr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line2);font-size:13.5px;color:var(--ink2)}
+.pr:last-child{border-bottom:none}
+.pr .n{font-weight:800;color:var(--brand)}
+.pop-x{position:absolute;top:8px;right:10px;color:var(--faint);font-size:16px}
+
+/* ===== profile ===== */
+.crumb{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.crumb a{cursor:pointer}
+.phead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.phead .pic{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#6C5CE7,#8E7BFB);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px}
+.pname{font-size:18px;font-weight:800}
+.pmeta{font-size:12.5px;color:var(--muted)}
+.chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.chip.cc{background:#EEF3FF;color:#2156E8}
+.chip.ok{background:var(--green-bg);color:var(--green)}
+.pactions{margin-left:auto;display:flex;gap:10px;position:relative}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:9px 14px;font-size:14px;font-weight:600;color:var(--ink2);border-bottom:2px solid transparent;cursor:pointer}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px 26px}
+.kv .k{font-size:12px;color:var(--muted);margin-bottom:3px}
+.kv .v{font-size:14.5px;font-weight:600;color:var(--ink)}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700}
+.badge.paid{background:var(--green-bg);color:var(--green)}
+.badge.allowed{background:var(--brand-bg);color:var(--brand)}
+.badge.success{background:var(--green-bg);color:var(--green)}
+.badge.submitted{background:#EEF3FF;color:#2156E8}
+.subcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:14px}
+.subcard{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.subrow{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px;color:var(--ink2)}
+.subrow .sv{font-weight:700;color:var(--ink)}
+
+/* repayments layout */
+.rlayout{display:grid;grid-template-columns:230px 1fr;gap:16px}
+.rside{display:flex;flex-direction:column;gap:6px}
+.rtab{text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.rtab.active{color:var(--brand);border-color:var(--brand-ln);background:var(--brand-bg);font-weight:700}
+
+/* orders accordion */
+.acc{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.acc-h{padding:14px 18px;font-weight:800;font-size:14.5px;display:flex;justify-content:space-between;cursor:pointer;background:#FAFAFE}
+.acc-b{padding:4px 8px 10px;display:none}
+.acc.open .acc-b{display:block}
+.acc-h .car{color:var(--muted);transition:transform .15s}
+.acc.open .car{transform:rotate(90deg)}
+.subtabs{display:flex;gap:16px;padding:10px 12px 0;border-bottom:1px solid var(--line)}
+.subtab{font-size:12.5px;font-weight:700;color:var(--muted);padding-bottom:8px;border-bottom:2px solid transparent;cursor:pointer}
+.subtab.active{color:var(--brand);border-bottom-color:var(--brand)}
+
+/* dropdown menu (repayment actions) */
+.menu{position:absolute;top:44px;right:0;width:270px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 34px rgba(30,34,51,.16);padding:6px;z-index:30}
+.mi{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:14px;color:var(--ink2);font-weight:600}
+.mi:hover{background:var(--brand-bg);color:var(--brand)}
+.mi .mic{width:18px;text-align:center}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(20,22,34,.45);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:14px;width:520px;max-width:100%;max-height:90vh;overflow:auto;padding:22px 24px}
+.modal h3{font-size:17px;font-weight:800;margin-bottom:4px}
+.modal .msub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid #D9DCEA;border-radius:8px;padding:9px 12px;font-size:14px;outline:none;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand)}
+.field textarea{resize:vertical;min-height:64px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.btn{border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700}
+.btn.primary{background:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-d)}
+.btn.ghost{background:#fff;color:var(--ink2);border:1.5px solid #D9DCEA}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.btn.approve{background:var(--green);color:#fff}
+.btn.reject{background:#fff;color:var(--red);border:1.5px solid #F3C9C9}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+@media(max-width:760px){
+  .rlayout{grid-template-columns:1fr}
+  .pactions{margin-left:0;width:100%}
+  .page{padding:16px 14px 80px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<div class="nav">
+  <div class="logo"><span class="dot"></span>spacce</div>
+  <span class="pill">EXTERNAL</span>
+  <span class="navlink active" id="nav-home" onclick="go('home')">Home</span>
+  <span class="navlink" id="nav-appr" onclick="go('approvals')">Approvals</span>
+  <button class="nbtn primary" onclick="downloadPortfolio()">&#8681; Download Agent Portfolio</button>
+  <button class="nbtn ghost" onclick="openFeedback()">&#8682; Upload Feedback</button>
+  <span class="sp"></span>
+  <span class="tag-admin">ADMIN</span>
+  <span class="user"><span class="avatar"></span>agency.admin</span>
+</div>
+
+<!-- ===== HOME ===== -->
+<div class="page" id="view-home">
+  <div class="topsearch">
+    <form class="search" onsubmit="doSearch(event)">
+      <span class="mag"></span>
+      <input id="searchInput" placeholder="Search a customer by UUID, phone or loan / account number…" value="8459090480">
+    </form>
+  </div>
+
+  <div class="h1">Agency Overview</div>
+  <div class="sub">Credit Cards · PAN India Recovery Agency</div>
+
+  <div class="panel">
+    <div class="ptitle">Metrics by Bucket</div>
+    <table class="tbl" id="bktTable">
+      <thead><tr>
+        <th>Bucket</th><th class="r">Total Cases</th><th class="r">Total POS</th>
+        <th class="r">Daily Resolution Rate</th><th class="r">MTD Resolution</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="pop hidden" id="crPop">
+      <button class="pop-x" onclick="closePop()">&times;</button>
+      <div class="pop-h" id="crPopH">Case Resolution</div>
+      <div class="pop-s">Breakdown for this bucket</div>
+      <div id="crPopBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILE ===== -->
+<div class="page hidden" id="view-profile">
+  <div class="crumb"><a onclick="go('home')">Home</a> &nbsp;/&nbsp; Customer</div>
+  <div class="phead">
+    <div class="pic">KS</div>
+    <div>
+      <div class="pname">Kaustubh Shirsath</div>
+      <div class="pmeta">CIF 8459090480 · <span class="chip cc">CREDIT CARD</span> <span class="chip ok">ALL_ALLOWED</span></div>
+    </div>
+    <div class="pactions">
+      <button class="nbtn ghost" onclick="go('plhistory')">Payment Link History</button>
+      <button class="nbtn primary" onclick="toggleMenu(event)">Repayment Actions ▾</button>
+      <div class="menu hidden" id="raMenu">
+        <div class="mi" onclick="payAction('Min Due')"><span class="mic">✂</span>Pay - Min Due</div>
+        <div class="mi" onclick="payAction('Total Remaining Bill')"><span class="mic">₹</span>Pay - Total Remaining Bill</div>
+        <div class="mi" onclick="payAction('Custom Amount')"><span class="mic">▦</span>Pay - Custom Amount</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="overview" onclick="profTab('overview')">Overview</div>
+    <div class="tab" data-tab="userinfo" onclick="profTab('userinfo')">User Info</div>
+    <div class="tab" data-tab="repayments" onclick="profTab('repayments')">Repayments</div>
+    <div class="tab" data-tab="orders" onclick="profTab('orders')">Orders</div>
+  </div>
+
+  <!-- overview -->
+  <div class="tabpane" id="pane-overview">
+    <div class="panel">
+      <div class="grid">
+        <div class="kv"><div class="k">Age</div><div class="v">27</div></div>
+        <div class="kv"><div class="k">Gender</div><div class="v">Male</div></div>
+        <div class="kv"><div class="k">Bill Payment Status</div><div class="v"><span class="badge paid">PAID</span></div></div>
+        <div class="kv"><div class="k">Bill Amount</div><div class="v">₹20,769.95</div></div>
+        <div class="kv"><div class="k">Remaining Bill Amount</div><div class="v">₹0.00</div></div>
+        <div class="kv"><div class="k">User Phone</div><div class="v">8459090480</div></div>
+        <div class="kv"><div class="k">Bill Due Date</div><div class="v">5th Jul 2026</div></div>
+        <div class="kv"><div class="k">Minimum Due Amount</div><div class="v">₹1,038.50</div></div>
+        <div class="kv"><div class="k">Remaining Late Penalty</div><div class="v">₹0.00</div></div>
+        <div class="kv"><div class="k">Remaining Late Fees</div><div class="v">₹0.00</div></div>
+        <div class="kv"><div class="k">Account Status</div><div class="v"><span class="badge allowed">ALL_ALLOWED</span></div></div>
+        <div class="kv"><div class="k">Account Creation Date</div><div class="v">30th Apr 2026</div></div>
+        <div class="kv"><div class="k">Overall Limit</div><div class="v">₹3,23,000.00</div></div>
+        <div class="kv"><div class="k">Available Limit</div><div class="v">₹3,19,299.13</div></div>
+      </div>
+    </div>
+    <div class="subcards">
+      <div class="subcard">
+        <div class="subrow"><span>Current Bucket</span><span class="sv">—</span></div>
+        <div class="subrow"><span>Category</span><span class="sv">—</span></div>
+        <div class="subrow"><span>Next Followup Date</span><span class="sv">—</span></div>
+      </div>
+      <div class="subcard">
+        <div class="subrow"><span>Settlement Status</span><span class="sv">—</span></div>
+        <div class="subrow"><span>Profile Type</span><span class="sv">salaried</span></div>
+        <div class="subrow"><span>User Type</span><span class="sv">Normal</span></div>
+      </div>
+      <div class="subcard">
+        <div class="subrow"><span>Max DPD</span><span class="sv">—</span></div>
+        <div class="subrow"><span>Current DPD</span><span class="sv">—</span></div>
+        <div class="subrow"><span>Due since</span><span class="sv">—</span></div>
+      </div>
+      <div class="subcard">
+        <div class="subrow"><span>Preferred Language</span><span class="sv">—</span></div>
+        <div class="subrow"><span>Actual Language</span><span class="sv">Marathi</span></div>
+        <div class="subrow"><span>Last Payment Date</span><span class="sv">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- user info -->
+  <div class="tabpane hidden" id="pane-userinfo">
+    <div class="panel">
+      <div class="grid">
+        <div class="kv"><div class="k">DOB</div><div class="v">1999-05-13</div></div>
+        <div class="kv"><div class="k">Email</div><div class="v">ksts135@gmail.com</div></div>
+        <div class="kv"><div class="k">Sub Profile Type</div><div class="v">student-c1</div></div>
+        <div class="kv"><div class="k">Identity Proof Type</div><div class="v">PAN</div></div>
+        <div class="kv"><div class="k">Identity Number</div><div class="v">XXXXXX127Q</div></div>
+        <div class="kv"><div class="k">Company Name</div><div class="v">slice</div></div>
+        <div class="kv"><div class="k">Company City</div><div class="v">Bengaluru</div></div>
+        <div class="kv"><div class="k">Income</div><div class="v">20L-50L</div></div>
+        <div class="kv"><div class="k">Risk Tags</div><div class="v"><span class="chip cc">3P</span></div></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="k" style="font-size:12px;color:var(--muted);margin-bottom:3px">Current Address</div>
+        <div style="font-size:13.5px;color:var(--ink2)">S O SATISH SHIRSATH PLOT NO C SN PARIJAT NAGAR N CIDCO, IN FRONT OF GOKUL SWEET CIDCO COLONY AURANGABAD, MAHARASHTRA, INDIA, 431003</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">Phone Variation</div>
+      <table class="tbl">
+        <thead><tr><th>Added By</th><th>Phone Number</th><th>Relation</th><th class="r">Action</th></tr></thead>
+        <tbody><tr>
+          <td>ANALYTICS</td><td>8459090480</td><td>1-registered_phone_number</td>
+          <td class="r"><button class="btn ghost sm" onclick="toast('Number copied')">Copy</button>
+          <button class="btn ghost sm" onclick="toast('Calling 8459090480…')">Call</button></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="ptitle">Address Variation</div>
+      <table class="tbl">
+        <thead><tr><th>Added On</th><th>Category</th><th>Address</th><th class="r">Action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>30th Apr 2026</td><td>Current</td>
+            <td>S O SATISH SHIRSATH PLOT NO C SN PARIJAT NAGAR N CIDCO, IN FRONT OF GOKUL SWEET CIDCO COLONY AURANGABAD, MAHARASHTRA, INDIA, 431003</td>
+            <td class="r"><button class="btn ghost sm" onclick="toast('Address copied')">Copy</button></td>
+          </tr>
+          <tr>
+            <td>30th Apr 2026</td><td>Permanent</td>
+            <td>S O SATISH SHIRSATH PLOT NO C SN PARIJAT NAGAR N CIDCO IN FRONT OF GOKUL SWEET CIDCO COLONY AURANGABAD MAHARASHTRA INDIA 431003</td>
+            <td class="r"><button class="btn ghost sm" onclick="toast('Address copied')">Copy</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- repayments -->
+  <div class="tabpane hidden" id="pane-repayments">
+    <div class="rlayout">
+      <div class="rside">
+        <button class="rtab" onclick="repTab(this,'pending')">⏱ Payments - Pending</button>
+        <button class="rtab active" onclick="repTab(this,'paid')">✔ Payments - Paid</button>
+        <button class="rtab" onclick="repTab(this,'failed')">⊘ Payments - Failed</button>
+      </div>
+      <div class="panel" style="margin:0">
+        <div class="ptitle" id="repTitle">Payments - Paid</div>
+        <table class="tbl" id="repTable">
+          <thead><tr><th>Paid At Date</th><th class="r">Paid Amount</th><th>Status</th><th>Repayment ID</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- orders -->
+  <div class="tabpane hidden" id="pane-orders">
+    <div class="acc open" id="accCC">
+      <div class="acc-h" onclick="this.parentElement.classList.toggle('open')">Credit Card <span class="car">›</span></div>
+      <div class="acc-b">
+        <div class="subtabs">
+          <div class="subtab active" onclick="ordTab(this,'bills')">CREDIT CARD BILLS</div>
+          <div class="subtab" onclick="ordTab(this,'unbilled')">UNBILLED TRANSACTIONS</div>
+        </div>
+        <div id="ord-bills">
+          <table class="tbl">
+            <thead><tr><th>Bill ID</th><th>Generated On</th><th>Due Date</th><th class="r">Bill Amount</th><th class="r">Min Due</th><th class="r">Paid</th><th class="r">Remaining</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>f3431803-61bc…</td><td>20th Jun 2026</td><td>5th Jul 2026</td><td class="r">₹20,769.95</td><td class="r">₹1,038.50</td><td class="r">₹20,769.95</td><td class="r">₹0.00</td><td><span class="badge paid">PAID</span></td></tr>
+              <tr><td>13df48fb-71a1…</td><td>20th May 2026</td><td>5th Jun 2026</td><td class="r">₹63,674.94</td><td class="r">₹3,183.75</td><td class="r">₹63,674.94</td><td class="r">₹0.00</td><td><span class="badge paid">PAID</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="ord-unbilled" class="hidden">
+          <table class="tbl">
+            <thead><tr><th>Txn ID</th><th>Date</th><th>Merchant</th><th class="r">Amount</th></tr></thead>
+            <tbody>
+              <tr><td>TXN-9f21a</td><td>28th Jun 2026</td><td>Amazon Pay</td><td class="r">₹1,499.00</td></tr>
+              <tr><td>TXN-7c04b</td><td>30th Jun 2026</td><td>Swiggy</td><td class="r">₹648.20</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT LINK HISTORY ===== -->
+<div class="page hidden" id="view-plhistory">
+  <div class="crumb"><a onclick="go('home')">Home</a> &nbsp;/&nbsp; <a onclick="openProfile()">Kaustubh Shirsath</a> &nbsp;/&nbsp; Payment Link History</div>
+  <div class="panel">
+    <div class="ptitle">Payment Link History</div>
+    <table class="tbl">
+      <thead><tr><th>Generated On</th><th>Generated By</th><th class="r">Amount</th><th>Expiry</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>1st Jul 2026, 10:12 am</td><td>agency.admin</td><td class="r">₹1,038.50</td><td>3rd Jul 2026</td><td><span class="badge submitted">ACTIVE</span></td></tr>
+        <tr><td>21st Jun 2026, 2:20 pm</td><td>agent.rk</td><td class="r">₹20,769.95</td><td>23rd Jun 2026</td><td><span class="badge success">USED</span></td></tr>
+        <tr><td>15th Jun 2026, 6:40 pm</td><td>agent.rk</td><td class="r">₹5,000.00</td><td>17th Jun 2026</td><td><span class="badge" style="background:#F1F2F8;color:#8A90A6">EXPIRED</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== APPROVALS ===== -->
+<div class="page hidden" id="view-approvals">
+  <div class="h1">Approvals</div>
+  <div class="sub">Waiver requests raised on your agency's customers · Admin checker</div>
+  <div class="panel">
+    <div class="ptitle">Submitted Waiver Requests</div>
+    <table class="tbl" id="apprTable">
+      <thead><tr>
+        <th>UUID</th><th>Created</th><th>Requested By</th><th class="r">Late Penalty</th><th class="r">Late Interest</th>
+        <th class="r">Total Repayment</th><th class="r">Total Waiver</th><th>Reason</th><th>Status</th><th class="r">Action</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- modal mount -->
+<div id="modalMount"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== dummy data =====
+const BUCKETS = [
+  {k:'BKT0',cls:'b0',cases:1946,pos:'₹1.02 Cr',daily:'9.1%',mtd:'52.4%',cr:{Normal:1024,'Resolved Min Due':318,Forward:196,Stable:241,Rollback:62,'Partial Payment':105}},
+  {k:'BKT1',cls:'b1',cases:1120,pos:'₹0.94 Cr',daily:'6.2%',mtd:'41.0%',cr:{Normal:560,'Resolved Min Due':180,Forward:120,Stable:150,Rollback:48,'Partial Payment':62}},
+  {k:'BKT2',cls:'b2',cases:648,pos:'₹0.71 Cr',daily:'4.8%',mtd:'30.2%',cr:{Normal:280,'Resolved Min Due':92,Forward:78,Stable:96,Rollback:44,'Partial Payment':58}},
+  {k:'BKT3',cls:'b3',cases:312,pos:'₹0.58 Cr',daily:'3.1%',mtd:'19.5%',cr:{Normal:110,'Resolved Min Due':38,Forward:52,Stable:60,Rollback:22,'Partial Payment':30}},
+  {k:'BKT4+',cls:'b4',cases:156,pos:'₹0.46 Cr',daily:'1.9%',mtd:'11.8%',cr:{Normal:40,'Resolved Min Due':14,Forward:32,Stable:40,Rollback:17,'Partial Payment':13}},
+];
+const TOTAL = {k:'Total',cases:'4,182',pos:'₹3.71 Cr',daily:'6.4%',mtd:'38.2%',cr:{Normal:2014,'Resolved Min Due':612,Forward:438,Stable:521,Rollback:193,'Partial Payment':404}};
+
+const REPAYMENTS = {
+  paid:[
+    {d:'21st Jun 2026, 2:34 pm',a:'₹20,769.95',id:'9c2adc63-64cc-4115-b976-c1b1614554af'},
+    {d:'23rd May 2026, 5:11 pm',a:'₹63,674.94',id:'a8e56a6b-1eaa-4ab0-aa75-940c39ab4a23'},
+    {d:'3rd Dec 2022, 9:37 pm',a:'₹11.36',id:'RID-af779de7-8d66-417d-b734-79360efbc65f'},
+  ],
+  pending:[], failed:[]
+};
+const WAIVERS = [
+  {uuid:'0b5a5101-288e-42de-8637-07ca746e75e1',created:'1st Jul 2026, 9:58 am',by:'srishivasaisol…',lp:'100%',li:'100%',repay:'₹16,212.70',waiver:'₹503.19',reason:'Financial',status:'SUBMITTED'}
+];
+
+// ===== render home =====
+function renderBuckets(){
+  const tb=document.querySelector('#bktTable tbody'); tb.innerHTML='';
+  BUCKETS.forEach((b,i)=>{
+    tb.innerHTML+=`<tr>
+      <td><span class="bktcell ${b.cls}">${b.k} <span class="info" onclick="showPop(event,${i})">i</span></span></td>
+      <td class="r">${b.cases.toLocaleString('en-IN')}</td><td class="r">${b.pos}</td>
+      <td class="r">${b.daily}</td><td class="r">${b.mtd}</td></tr>`;
+  });
+  tb.innerHTML+=`<tr class="total">
+    <td><span class="bktcell">Total <span class="info" onclick="showPop(event,-1)">i</span></span></td>
+    <td class="r">${TOTAL.cases}</td><td class="r">${TOTAL.pos}</td>
+    <td class="r">${TOTAL.daily}</td><td class="r">${TOTAL.mtd}</td></tr>`;
+}
+function showPop(e,i){
+  e.stopPropagation();
+  document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
+  e.target.classList.add('on');
+  const src = i<0?TOTAL:BUCKETS[i];
+  document.getElementById('crPopH').textContent='Case Resolution · '+src.k;
+  document.getElementById('crPopBody').innerHTML=Object.entries(src.cr)
+    .map(([k,v])=>`<div class="pr"><span>${k}</span><span class="n">${v.toLocaleString('en-IN')}</span></div>`).join('');
+  const pop=document.getElementById('crPop'); pop.classList.remove('hidden');
+  const panel=e.target.closest('.panel').getBoundingClientRect();
+  const r=e.target.getBoundingClientRect();
+  pop.style.left=Math.min(r.left-panel.left+24, panel.width-310)+'px';
+  pop.style.top=(r.top-panel.top+24)+'px';
+}
+function closePop(){document.getElementById('crPop').classList.add('hidden');document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));}
+
+// ===== render repayments =====
+function renderRep(kind){
+  const rows=REPAYMENTS[kind]; const tb=document.querySelector('#repTable tbody');
+  document.getElementById('repTitle').textContent='Payments - '+kind.charAt(0).toUpperCase()+kind.slice(1);
+  tb.innerHTML = rows.length? rows.map(r=>`<tr><td>${r.d}</td><td class="r">${r.a}</td>
+    <td><span class="badge success">SUCCESS</span></td><td><a>${r.id}</a></td></tr>`).join('')
+    : `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:26px">No ${kind} payments</td></tr>`;
+}
+function repTab(el,kind){document.querySelectorAll('.rtab').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderRep(kind);}
+
+// ===== render approvals =====
+function renderAppr(){
+  const tb=document.querySelector('#apprTable tbody');
+  tb.innerHTML=WAIVERS.map((w,i)=>`<tr id="wrow${i}">
+    <td><a>${w.uuid.slice(0,13)}…</a></td><td>${w.created}</td><td>${w.by}</td>
+    <td class="r">${w.lp}</td><td class="r">${w.li}</td><td class="r">${w.repay}</td><td class="r">${w.waiver}</td>
+    <td>${w.reason}</td><td><span class="badge submitted">${w.status}</span></td>
+    <td class="r" style="white-space:nowrap"><button class="btn approve sm" onclick="decide(${i},'APPROVED')">Approve</button>
+    <button class="btn reject sm" onclick="decide(${i},'REJECTED')">Reject</button></td></tr>`).join('');
+}
+function decide(i,verdict){
+  const row=document.getElementById('wrow'+i);
+  const cls=verdict==='APPROVED'?'success':'';
+  row.children[8].innerHTML=`<span class="badge ${verdict==='APPROVED'?'success':''}" style="${verdict==='REJECTED'?'background:var(--red-bg);color:var(--red)':''}">${verdict}</span>`;
+  row.children[9].innerHTML='<span style="color:var(--muted);font-size:12.5px">Actioned</span>';
+  toast('Waiver '+verdict.toLowerCase());
+}
+
+// ===== routing =====
+function go(v){
+  ['home','profile','approvals','plhistory'].forEach(x=>document.getElementById('view-'+x).classList.add('hidden'));
+  document.getElementById('view-'+v).classList.remove('hidden');
+  document.getElementById('nav-home').classList.toggle('active',v==='home');
+  document.getElementById('nav-appr').classList.toggle('active',v==='approvals');
+  if(v==='approvals') renderAppr();
+  closeMenu(); window.scrollTo(0,0);
+}
+function doSearch(e){e.preventDefault();openProfile();}
+function openProfile(){go('home');document.getElementById('view-home').classList.add('hidden');document.getElementById('view-profile').classList.remove('hidden');profTab('overview');window.scrollTo(0,0);}
+function profTab(t){
+  document.querySelectorAll('#view-profile .tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));
+  ['overview','userinfo','repayments','orders'].forEach(x=>document.getElementById('pane-'+x).classList.toggle('hidden',x!==t));
+  if(t==='repayments') renderRep('paid');
+}
+function ordTab(el,which){el.parentElement.querySelectorAll('.subtab').forEach(x=>x.classList.remove('active'));el.classList.add('active');
+  document.getElementById('ord-bills').classList.toggle('hidden',which!=='bills');
+  document.getElementById('ord-unbilled').classList.toggle('hidden',which!=='unbilled');}
+
+// ===== repayment actions menu =====
+function toggleMenu(e){e.stopPropagation();document.getElementById('raMenu').classList.toggle('hidden');}
+function closeMenu(){const m=document.getElementById('raMenu');if(m)m.classList.add('hidden');}
+function payAction(kind){closeMenu();toast('Payment initiated — '+kind);}
+
+// ===== modals =====
+function openFeedback(){
+  document.getElementById('modalMount').innerHTML=`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>Upload Feedback</h3>
+      <div class="msub">Bulk Collection Notes · maps to BULK_COLLECTION_NOTES</div>
+      <div class="field"><label>UUID</label><input value="0b5a5101-288e-42de-8637-07ca746e75e1"></div>
+      <div class="field"><label>Reason</label>
+        <select><option>PTP - Promise to Pay</option><option>RTP - Refuse to Pay</option><option>Not Reachable</option><option>Dispute</option></select></div>
+      <div class="field"><label>Added By</label><input value="agency.admin" readonly></div>
+      <div class="field"><label>Comments</label><textarea placeholder="Interaction remarks…"></textarea></div>
+      <div class="field"><label>Comms Mode</label>
+        <select><option>Call</option><option>WhatsApp</option><option>Field Visit</option><option>SMS</option></select></div>
+      <div class="field"><label>Category Code</label>
+        <select><option>CC_COLLECTION</option><option>CC_SETTLEMENT</option><option>CC_DISPUTE</option></select></div>
+      <div class="field"><label>Follow-up Date</label><input type="date" value="2026-07-05"></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" onclick="closeModal();toast('Feedback uploaded')">Submit</button></div>
+    </div></div>`;
+}
+function openPayLink(){
+  closeMenu();
+  document.getElementById('modalMount').innerHTML=`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:440px">
+      <h3>Generate Payment Link</h3>
+      <div class="msub">Kaustubh Shirsath · Credit Card</div>
+      <div class="field"><label>Amount (₹)</label><input value="1038.50"></div>
+      <div class="field"><label>Expiry</label><select><option>24 hours</option><option>48 hours</option><option>72 hours</option></select></div>
+      <div class="field"><label>Share via</label><select><option>WhatsApp</option><option>SMS</option></select></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" onclick="closeModal();toast('Payment link generated & shared')">Generate & Share</button></div>
+    </div></div>`;
+}
+function closeModal(){document.getElementById('modalMount').innerHTML='';}
+
+// ===== portfolio download =====
+function downloadPortfolio(){
+  const rows=[['UUID','Customer','Product','Bucket','POS','Due Date','Assigned Agent']];
+  rows.push(['0b5a5101-288e-42de-8637-07ca746e75e1','Kaustubh Shirsath','CREDIT_CARD','BKT0','20769.95','2026-07-05','agent.rk']);
+  rows.push(['a41c22de-11ff-4a02-9c31-77b0','Rahul Verma','CREDIT_CARD','BKT2','48210.00','2026-07-02','agent.sn']);
+  rows.push(['c93f18bb-71a1-4de0-88aa-4c2d','Priya Nair','CREDIT_CARD','BKT1','12980.50','2026-07-08','agent.rk']);
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='agent_portfolio_CC.csv';a.click();URL.revokeObjectURL(url);
+  toast('Agent portfolio downloaded (agency level)');
+}
+
+// ===== toast =====
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);}
+
+// global click closers
+document.addEventListener('click',()=>{closeMenu();});
+document.addEventListener('click',(e)=>{if(!e.target.closest('#crPop')&&!e.target.classList.contains('info'))closePop();});
+
+// init
+renderBuckets();
+</script>
+</body>
+</html>
