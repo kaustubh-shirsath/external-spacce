@@ -295,6 +295,12 @@ a{color:var(--brand);text-decoration:none}
         <div class="kv"><div class="k">Company City</div><div class="v">Bengaluru</div></div>
         <div class="kv"><div class="k">Income</div><div class="v">20L-50L</div></div>
         <div class="kv"><div class="k">Risk Tags</div><div class="v"><span class="chip cc">3P</span></div></div>
+        <div class="kv"><div class="k">Collection Tags</div>
+          <div class="v" style="display:flex;align-items:center;gap:8px">
+            <span class="chip" style="background:#EEF3FF;color:#2156E8">PTP</span>
+            <button class="btn ghost sm" onclick="openCollectionTags()" title="Update Collection Tags">&#9998; Update</button>
+          </div>
+        </div>
       </div>
       <div style="margin-top:16px">
         <div class="k" style="font-size:12px;color:var(--muted);margin-bottom:3px">Current Address</div>
@@ -603,6 +609,35 @@ function openPayLink(){
       <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button>
         <button class="btn primary" onclick="closeModal();toast('Payment link generated & shared')">Generate & Share</button></div>
     </div></div>`;
+}
+function openCollectionTags(){
+  document.getElementById('modalMount').innerHTML=`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:460px">
+      <button class="pop-x" style="position:absolute;top:16px;right:20px;font-size:20px" onclick="closeModal()">&times;</button>
+      <h3>Update Collection Tags</h3>
+      <div style="display:flex;gap:22px;margin:14px 0 16px">
+        <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer">
+          <input type="radio" name="ctmode" value="add" checked> Add</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer">
+          <input type="radio" name="ctmode" value="delete"> Delete</label>
+      </div>
+      <div class="field"><label>Collection Tag <span style="color:var(--red)">*</span></label>
+        <select id="ctTag"><option value="">Select a collection tag</option>
+          <option>PTP - Promise to Pay</option><option>RTP - Refuse to Pay</option>
+          <option>Not Reachable</option><option>Wrong Number</option><option>Disputed</option></select></div>
+      <div class="field"><label>Expiry Date <span style="color:var(--red)">*</span></label>
+        <input id="ctExp" type="date"></div>
+      <div class="modal-foot"><button class="btn primary" onclick="submitCollectionTags()">Submit</button></div>
+    </div></div>`;
+}
+function submitCollectionTags(){
+  const tag=document.getElementById('ctTag').value, exp=document.getElementById('ctExp').value;
+  const mode=document.querySelector('input[name=ctmode]:checked').value;
+  if(!tag){toast('Select a collection tag');return;}
+  if(!exp){toast('Set an expiry date');return;}
+  closeModal();
+  toast('Collection tag '+(mode==='add'?'added':'deleted'));
 }
 function closeModal(){document.getElementById('modalMount').innerHTML='';}
 
