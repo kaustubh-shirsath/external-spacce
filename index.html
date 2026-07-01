@@ -297,7 +297,7 @@ a{color:var(--brand);text-decoration:none}
         <div class="kv"><div class="k">Risk Tags</div><div class="v"><span class="chip cc">3P</span></div></div>
         <div class="kv"><div class="k">Collection Tags</div>
           <div class="v" style="display:flex;align-items:center;gap:8px">
-            <span class="chip" style="background:#EEF3FF;color:#2156E8">PTP</span>
+            <span class="chip" style="background:#EEF3FF;color:#2156E8">retain</span>
             <button class="btn ghost sm" onclick="openCollectionTags()" title="Update Collection Tags">&#9998; Update</button>
           </div>
         </div>
@@ -624,8 +624,8 @@ function openCollectionTags(){
       </div>
       <div class="field"><label>Collection Tag <span style="color:var(--red)">*</span></label>
         <select id="ctTag"><option value="">Select a collection tag</option>
-          <option>PTP - Promise to Pay</option><option>RTP - Refuse to Pay</option>
-          <option>Not Reachable</option><option>Wrong Number</option><option>Disputed</option></select></div>
+          <option>repayment_extension</option><option>escalation_extension</option>
+          <option>retain</option></select></div>
       <div class="field"><label>Expiry Date <span style="color:var(--red)">*</span></label>
         <input id="ctExp" type="date"></div>
       <div class="modal-foot"><button class="btn primary" onclick="submitCollectionTags()">Submit</button></div>
