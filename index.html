@@ -51,21 +51,43 @@ a{color:var(--brand);text-decoration:none}
 .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;position:relative;margin-bottom:16px}
 .ptitle{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 
-/* ===== summary tiles ===== */
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
-.tile .tl{font-size:12px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.tile .tv{font-size:24px;font-weight:800;color:var(--ink)}
-.tile.combined{background:linear-gradient(160deg,#FBFAFF,#fff)}
+/* ===== summary tiles — matches live borrow-spacce: plain text, no card, soft wash ===== */
+.tileswrap{background:linear-gradient(120deg,rgba(227,215,255,.55),rgba(244,245,250,0) 60%);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.tile{padding:0}
+.tile .tl{font-size:13px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:5px;margin-bottom:8px}
+.tile .tv{font-size:26px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px}
 @media(max-width:900px){.tiles{grid-template-columns:repeat(2,1fr)}}
 
-/* ===== product tabs ===== */
-.ptabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
-.ptab{padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--ink2);background:#fff;border:1.4px solid var(--line);display:flex;align-items:center;gap:8px;cursor:pointer}
+/* ===== top-level tabs: Summary / Borrow / Credit Card / EDI / EDL ===== */
+.ptabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.ptab{padding:10px 16px;font-size:13.5px;font-weight:700;color:var(--ink2);background:none;border:none;border-bottom:2.5px solid transparent;display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:-1px}
 .ptab .pc{background:var(--line2);color:var(--muted);font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px}
-.ptab.active{color:var(--brand);border-color:var(--brand-ln);background:var(--brand-bg)}
+.ptab.active{color:var(--brand);border-bottom-color:var(--brand)}
 .ptab.active .pc{background:var(--brand);color:#fff}
 .pdot{width:7px;height:7px;border-radius:50%;flex:none}
+.psumblock{margin-bottom:26px}
+.psum-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.psum-h .pname{font-size:14.5px;font-weight:800;color:var(--ink)}
+.psum-h .pagent{font-size:11.5px;color:var(--muted);font-weight:600}
+
+/* ===== case-list filter bar (matches "Assigned Cases" toolbar) ===== */
+.caselisthead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.caselisthead .ptitle{margin:0}
+.filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fbtn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1.4px solid #D9DCEA;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--ink2);background:#fff;position:relative;cursor:pointer}
+.fbtn .car{font-size:9px;color:var(--muted)}
+.fbtn .dot{width:6px;height:6px;border-radius:50%;background:var(--green);position:absolute;top:5px;right:6px}
+.fsearch{display:flex;align-items:center;gap:8px;border:1.4px solid #D9DCEA;border-radius:9px;padding:8px 13px;background:#fff;width:230px}
+.fsearch input{border:none;outline:none;flex:1;font-size:12.5px;color:var(--ink);background:none;min-width:0}
+.fsearch input::placeholder{color:var(--faint)}
+.frefresh{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1.4px solid #D9DCEA;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--ink2);background:#fff;cursor:pointer}
+.sorticon{color:var(--faint);font-size:9px;margin-left:3px}
+.emptybox{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 0;color:var(--muted)}
+.emptybox .eicon{width:46px;height:36px;border:2px solid #D9DCEA;border-top:none;border-radius:0 0 10px 10px;margin-bottom:12px;position:relative}
+.emptybox .eicon:before{content:'';position:absolute;top:-2px;left:-6px;right:-6px;height:2px;background:#D9DCEA}
+.pagerow{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:12.5px;color:var(--muted)}
+.rowselect{border:1px solid var(--line);border-radius:7px;padding:5px 9px;font-size:12.5px;color:var(--ink2);background:#fff}
 
 /* ===== tables ===== */
 .tbl{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -77,7 +99,7 @@ a{color:var(--brand);text-decoration:none}
 .tbl tbody tr:hover td{background:#FAFAFE}
 .bktcell{font-weight:800;letter-spacing:.04em;display:inline-flex;align-items:center;gap:8px}
 .b0{color:var(--green)}.b1{color:#2156E8}.b2{color:var(--amber)}.b3{color:var(--red)}.b4{color:#7A2E9C}.b5{color:#8A90A6}
-.info{width:16px;height:16px;border-radius:50%;border:1.4px solid #C3C8D8;color:var(--muted);font-size:10px;font-weight:800;font-style:italic;display:inline-flex;align-items:center;justify-content:center;font-family:Georgia,serif;cursor:pointer;flex:none}
+.info{width:15px;height:15px;border-radius:50%;border:1.4px solid #C3C8D8;color:#9AA0B4;font-size:9.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-family:-apple-system,sans-serif;cursor:pointer;flex:none;line-height:1}
 .info:hover,.info.on{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
 .tbl tr.total td{background:var(--brand-bg);font-weight:800;color:var(--ink);border-top:2px solid var(--brand-ln);border-bottom:none}
 .tbl tr.total .bktcell{color:var(--brand)}
@@ -223,12 +245,12 @@ a{color:var(--brand);text-decoration:none}
 <div class="page" id="view-home">
 
   <div class="h1">My Portfolio — Collection</div>
-  <div class="sub">Kaustubh Shirsath · combined book across Borrow, Credit Card, EDI &amp; EDL &nbsp;·&nbsp; agent-level view, one row per product tab below</div>
+  <div class="sub">Kaustubh Shirsath · combined book across Borrow, Credit Card, EDI &amp; EDL</div>
 
   <!-- ===== combined strip across all 4 products ===== -->
-  <div class="tiles" id="combinedTiles"></div>
+  <div class="tileswrap"><div class="tiles" id="combinedTiles"></div></div>
 
-  <!-- ===== product tabs ===== -->
+  <!-- ===== tabs: Summary (product + product×bucket) | Borrow | Credit Card | EDI | EDL (case list only) ===== -->
   <div class="ptabs" id="ptabs"></div>
 
   <div id="productPanels"></div>
@@ -484,6 +506,16 @@ const INFO = {
   'bor.col.profile': {t:'Profile Type', f:'profile_category — salaried A/B/C, student, freelancer.'},
   'bor.col.flow': {t:'Flow', f:"current_flow — FWD (unresolved) / NORM (normalized) / STBL (stabilised) / RB (rolled back, improved a bucket)."},
   'bor.col.disp': {t:'Last Disposition', f:'latest_disposition — most recent call outcome (PAID / RNR / NC / Voicemail / PTP…), sourced from copsdb_gold.collection_note joined by uuid.'},
+  'bor.col.agent': {t:'Agent Email', f:'tc_email_id — the allocated tele-caller for this cycle.'},
+  'pii.uname': {t:'User Name', f:'Borrow: name FROM manual_production_tables_pii.collection_allocation_automation\nCC/EDI/EDL: equivalent PII directory per product (not yet catalogued in this session).', n:'PII table, joined separately from the MIS — masked here, not pulled for this mockup.'},
+  'pii.uphone': {t:'User Phone', f:'registered_phone_number FROM exploratory_analytics_pii.phone_numbers_ranked_directory_v2, variant = 1-registered_phone_number (Borrow-confirmed path; other products use an equivalent PII directory).', n:'Masked here, not pulled for this mockup.'},
+  'bor.col.category': {t:'Category', f:'disposition_category_code — category tag on the most recent collection_note (distinct from latest_disposition, which is the free-text/code result of the call).'},
+  'bor.col.tags': {t:'Tags', f:'collections_triggers.flag, array-joined — e.g. retain, cash_rich, repayment_extension. From manual_production_tables_pii.collections_triggers for the current allocation_month.'},
+  'bor.col.calls': {t:'Total Calls', f:"COUNT(*) FROM copsdb_gold.tele_call_log WHERE uuid = :uuid AND cycle = current — dialler attempt count this cycle."},
+  'bor.col.comments': {t:'Comments', f:'comments — free-text field on the latest copsdb_gold.collection_note row.'},
+  'bor.col.followup': {t:'Follow Up Date', f:'followupdate — set by the agent on the last disposition, from collection_note.'},
+  'bor.col.multi': {t:'Multi Allocation', f:"Derived: 'Multi' if allocation_user.multi_allocation_tele_calling_ids or multi_allocation_field_ids is non-empty, else 'Single'. See MULTI ALLOCATION HLD (copsdb_gold.allocation_user)."},
+  'bor.col.action': {t:'Action', f:'UI-only — opens the case detail view (no new backend field, routes to the same customer profile page reachable from search).'},
 
   // ---- CC tiles ----
   'cc.cases': {t:'Total Cases', f:'COUNT(DISTINCT uuid) FROM manual_production_tables.current_month_collections_mis_cc\nWHERE tc_email_id = :agent AND mis_Date = (latest)', n:'CC MIS is bill-level — always COUNT(DISTINCT uuid) for user counts, never COUNT(*).'},
@@ -548,15 +580,15 @@ const PRODUCTS = {
       {name:'Bkt 6+', cls:'b4', cases:2, pos:'₹1.26L', res:'100.0%', cr:{NORM:1,STBL:1}},
     ],
     total:{name:'Total', cases:480, pos:'₹63.37L', res:'9.4%', cr:{FWD:435,NORM:21,STBL:21,RB:3}},
-    tblHead:[['UUID',null],['Bucket','bor.col.bucket'],['DPD','bor.col.dpd'],['POS','bor.col.pos'],['Overdue (EMI)','bor.col.emi'],['Profile','bor.col.profile'],['Flow','bor.col.flow'],['Last Disposition','bor.col.disp']],
+    tblHead:[['UUID',null],['Agent Email','bor.col.agent'],['User Name','pii.uname'],['User Phone','pii.uphone'],['Category','bor.col.category'],['Outcome','bor.col.flow'],['Overdue Amount','bor.col.emi'],['POS','bor.col.pos'],['Profile Type','bor.col.profile'],['Bucket','bor.col.bucket'],['Tags','bor.col.tags'],['Total Calls','bor.col.calls'],['Comments','bor.col.comments'],['Last Disposition','bor.col.disp'],['Follow Up Date','bor.col.followup'],['Multi Allocation','bor.col.multi'],['Action','bor.col.action']],
     rows:[
-      ['1aa8a820-8bcd-11ec-b470-b392213adebc','Bkt 6','184','₹1.90L','₹1.88L','salaried A','fwd','PAID'],
-      ['0cbc0270-4aa5-11ec-a2b4-934f7559cd96','Bkt 6','184','₹1.54L','₹1.24L','salaried A','fwd','RNR'],
-      ['4fc34566-eb96-4189-91fa-9129b3e5e59c','Bkt 6','184','₹1.02L','₹0.80L','salaried B','stbl','PAID'],
-      ['60807741-4181-404e-a344-8e10280ec575','Bkt 6+','215','₹0.99L','₹0.97L','salaried C','norm','—'],
-      ['77f20f38-8c81-4350-856e-93ea5f93f4ee','Bkt 6','184','₹0.88L','₹0.76L','salaried B','fwd','RNR'],
-      ['dd826370-98c2-11ec-a1bb-b184eb30bef7','Bkt 6','184','₹0.79L','₹0.71L','salaried B','fwd','NC'],
-      ['688d01c0-cf44-11ec-b198-5b235e99a6d8','Bkt 6','184','₹0.69L','₹0.66L','student','fwd','RNR'],
+      ['1aa8a820-8bcd-11ec-b470-b392213adebc','sudhansu.sahu.cw@slicebank.com','Customer','••••••','PAID','fwd','₹1.90L','₹1.88L','salaried A','Bkt 6','—','3','—','PAID','—','Single','⋯'],
+      ['0cbc0270-4aa5-11ec-a2b4-934f7559cd96','sudhansu.sahu.cw@slicebank.com','Customer','••••••','RNR','fwd','₹1.54L','₹1.24L','salaried A','Bkt 6','—','5','—','RNR','12 Aug 2026','Single','⋯'],
+      ['4fc34566-eb96-4189-91fa-9129b3e5e59c','sudhansu.sahu.cw@slicebank.com','Customer','••••••','PAID','stbl','₹1.02L','₹0.80L','salaried B','Bkt 6','retain','2','—','PAID','—','Single','⋯'],
+      ['60807741-4181-404e-a344-8e10280ec575','sudhansu.sahu.cw@slicebank.com','Customer','••••••','—','norm','₹0.99L','₹0.97L','salaried C','Bkt 6+','—','1','—','—','—','Single','⋯'],
+      ['77f20f38-8c81-4350-856e-93ea5f93f4ee','sudhansu.sahu.cw@slicebank.com','Customer','••••••','RNR','fwd','₹0.88L','₹0.76L','salaried B','Bkt 6','—','4','—','RNR','11 Aug 2026','Single','⋯'],
+      ['dd826370-98c2-11ec-a1bb-b184eb30bef7','sudhansu.sahu.cw@slicebank.com','Customer','••••••','NC','fwd','₹0.79L','₹0.71L','salaried B','Bkt 6','—','6','—','NC','11 Aug 2026','Single','⋯'],
+      ['688d01c0-cf44-11ec-b198-5b235e99a6d8','sudhansu.sahu.cw@slicebank.com','Customer','••••••','RNR','fwd','₹0.69L','₹0.66L','student','Bkt 6','—','2','—','RNR','13 Aug 2026','Single','⋯'],
     ],
   },
   cc:{
@@ -575,15 +607,15 @@ const PRODUCTS = {
       {name:'Bkt 3', cls:'b3', cases:3, pos:'₹0.12L', res:'100.0%', cr:{MINDUE_PAID:2,PAID:1}},
     ],
     total:{name:'Total', cases:373, pos:'₹59.91L', res:'81.8%', cr:{MINDUE_PAID:235,PAID:70,UNPAID:67,PARTIAL_PAID:1}},
-    tblHead:[['UUID',null],['Bucket','bor.col.bucket'],['DPD','cc.col.dpd'],['Remaining Bill','cc.col.bill'],['Min Due','cc.col.mindue'],['Status','cc.col.status'],['Profile Type','cc.col.profile']],
+    tblHead:[['UUID',null],['Agent Email','bor.col.agent'],['User Name','pii.uname'],['Bucket','bor.col.bucket'],['DPD','cc.col.dpd'],['Remaining Bill','cc.col.bill'],['Min Due','cc.col.mindue'],['Status','cc.col.status'],['Profile Type','cc.col.profile'],['Follow Up Date','bor.col.followup'],['Action','bor.col.action']],
     rows:[
-      ['ae59b276-af7d-48f8-b8a8-43828454b3f3','Bkt 0','1','₹2.74L','₹0.42L','mindue','freelancer'],
-      ['89d13239-738e-4027-b115-2f36dd7fbff2','Bkt 0','1','₹2.23L','₹0.43L','unpaid','freelancer'],
-      ['e413e520-7ecc-11ec-9dac-1730a0238bae','Bkt 0','1','₹1.24L','₹0.13L','mindue','salaried'],
-      ['996cf72a-d64f-49b5-ae79-720818c75f77','Bkt 0','1','₹1.05L','₹0.12L','mindue','salaried'],
-      ['17263b1b-58ab-4b82-8d07-73638b1b1930','Bkt 0','1','₹1.04L','₹0.50L','mindue','salaried'],
-      ['414f49f5-9328-4539-86ee-96d76b5768c3','Bkt 0','1','₹0.96L','₹0.08L','mindue','salaried'],
-      ['e50525e5-fa27-427e-b2be-bdbac0a94df2','Bkt 0','1','₹0.93L','₹0.09L','mindue','salaried'],
+      ['ae59b276-af7d-48f8-b8a8-43828454b3f3','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹2.74L','₹0.42L','mindue','freelancer','—','⋯'],
+      ['89d13239-738e-4027-b115-2f36dd7fbff2','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹2.23L','₹0.43L','unpaid','freelancer','12 Aug 2026','⋯'],
+      ['e413e520-7ecc-11ec-9dac-1730a0238bae','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹1.24L','₹0.13L','mindue','salaried','—','⋯'],
+      ['996cf72a-d64f-49b5-ae79-720818c75f77','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹1.05L','₹0.12L','mindue','salaried','—','⋯'],
+      ['17263b1b-58ab-4b82-8d07-73638b1b1930','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹1.04L','₹0.50L','mindue','salaried','—','⋯'],
+      ['414f49f5-9328-4539-86ee-96d76b5768c3','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹0.96L','₹0.08L','mindue','salaried','—','⋯'],
+      ['e50525e5-fa27-427e-b2be-bdbac0a94df2','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹0.93L','₹0.09L','mindue','salaried','—','⋯'],
     ],
   },
   edi:{
@@ -603,15 +635,15 @@ const PRODUCTS = {
       {name:'DPD 30+', cls:'b4', cases:7, pos:'₹7.99L', res:'0.0%', cr:{FWD:7}},
     ],
     total:{name:'Total', cases:66, pos:'₹83.91L', res:'48.5%', cr:{Resolved:21,STBL:9,FWD:34,RB:2}},
-    tblHead:[['UUID / CIF',null],['DPD Band','edi.col.band'],['DPD','edi.col.dpd'],['Sub-Category','edi.col.sub'],['Turnover','edi.col.turnover'],['POS','edi.col.pos'],['Status','edi.col.status'],['Last Disposition','edi.col.disp']],
+    tblHead:[['UUID / CIF',null],['Agent Email','bor.col.agent'],['DPD Band','edi.col.band'],['DPD','edi.col.dpd'],['Sub-Category','edi.col.sub'],['Turnover','edi.col.turnover'],['POS','edi.col.pos'],['Status','edi.col.status'],['Last Disposition','edi.col.disp'],['Action','bor.col.action']],
     rows:[
-      ['c63370e1-29cd-4260-a1ad-f63d8ebae8bd / 380004090416','DPD 30+','141','MANUFACTURING','₹5-10L','₹0.23L','fwd','uncontacted'],
-      ['e42892f1-637b-44a8-8b44-2a1c0933ee59 / 380002887960','DPD 30+','70','SERVICES','₹50L-1Cr','₹1.96L','fwd','uncontacted'],
-      ['8f5a4a51-1ad7-4c5f-afb1-5a09cbe5c13c / 380004301942','DPD 30+','38','RETAIL','₹10-20L','₹0.76L','fwd','RNR'],
-      ['2d252eda-e10b-4d6c-8e09-74b307277bfe / 380001137383','DPD 30+','35','GROCERY','₹5-10L','₹0.28L','fwd','PTP'],
-      ['66f900ce-836c-4c8d-b331-cf29078f1e68 / 380004233089','DPD 30+','34','HEALTH','₹5-10L','₹3.94L','fwd','RNR'],
-      ['905f960e-e9de-4b2a-9dca-11c91565e299 / 380002867888','DPD 15 to 30','22','RETAIL','₹50L-1Cr','₹1.10L','fwd','PTP'],
-      ['30681991-e38d-4645-b1ba-9c5c11ab0f92 / 380003142314','DPD 15 to 30','22','FOOD','₹10-20L','₹2.42L','res','PAID'],
+      ['c63370e1-29cd-4260-a1ad-f63d8ebae8bd / 380004090416','praveen.jadhav.cw@slicebank.com','DPD 30+','141','MANUFACTURING','₹5-10L','₹0.23L','fwd','uncontacted','⋯'],
+      ['e42892f1-637b-44a8-8b44-2a1c0933ee59 / 380002887960','praveen.jadhav.cw@slicebank.com','DPD 30+','70','SERVICES','₹50L-1Cr','₹1.96L','fwd','uncontacted','⋯'],
+      ['8f5a4a51-1ad7-4c5f-afb1-5a09cbe5c13c / 380004301942','praveen.jadhav.cw@slicebank.com','DPD 30+','38','RETAIL','₹10-20L','₹0.76L','fwd','RNR','⋯'],
+      ['2d252eda-e10b-4d6c-8e09-74b307277bfe / 380001137383','praveen.jadhav.cw@slicebank.com','DPD 30+','35','GROCERY','₹5-10L','₹0.28L','fwd','PTP','⋯'],
+      ['66f900ce-836c-4c8d-b331-cf29078f1e68 / 380004233089','praveen.jadhav.cw@slicebank.com','DPD 30+','34','HEALTH','₹5-10L','₹3.94L','fwd','RNR','⋯'],
+      ['905f960e-e9de-4b2a-9dca-11c91565e299 / 380002867888','praveen.jadhav.cw@slicebank.com','DPD 15 to 30','22','RETAIL','₹50L-1Cr','₹1.10L','fwd','PTP','⋯'],
+      ['30681991-e38d-4645-b1ba-9c5c11ab0f92 / 380003142314','praveen.jadhav.cw@slicebank.com','DPD 15 to 30','22','FOOD','₹10-20L','₹2.42L','res','PAID','⋯'],
     ],
   },
   edl:{
@@ -630,20 +662,21 @@ const PRODUCTS = {
       {name:'SMA - 2', cls:'b2', cases:4, pos:'₹6.26L', res:'50.0%', cr:{Stable:2,FWD:2}},
     ],
     total:{name:'Total', cases:34, pos:'₹71.85L', res:'73.5%', cr:{Stable:24,RB:1,FWD:9}},
-    tblHead:[['Loan A/C No',null],['Customer ID',null],['Bucket','edl.col.bucket'],['DPD','edl.col.dpd'],['POS','edl.col.pos'],['Overdue','edl.col.overdue'],['Outcome','edl.col.outcome'],['Product','edl.col.product']],
+    tblHead:[['Loan A/C No',null],['Agent Name',null],['Customer ID',null],['Bucket','edl.col.bucket'],['DPD','edl.col.dpd'],['POS','edl.col.pos'],['Overdue','edl.col.overdue'],['Outcome','edl.col.outcome'],['Product','edl.col.product'],['Action','bor.col.action']],
     rows:[
-      ['006037051000017','380000775453','SMA - 0','1','₹9.63L','₹0.28L','stable','edl_migrated_greater_than_5_lacs'],
-      ['009437051000017','380000394907','180+','213','₹9.07L','₹7.04L','fwd','edl_migrated_greater_than_5_lacs'],
-      ['006039691000114','230000021794','SMA - 0','1','₹4.61L','₹0.15L','stable','edl_inventory'],
-      ['006036061000741','180000707493','SMA - 0','1','₹3.70L','₹0.06L','fwd','edl_migrated'],
-      ['006039691000109','231000073537','SMA - 0','1','₹3.14L','₹0.14L','stable','edl_inventory'],
-      ['006039691000126','380003808480','SMA - 1','32','₹2.71L','₹0.11L','stable','edl_inventory'],
-      ['006039691000035','380000459773','SMA - 2','62','₹2.45L','₹0.27L','fwd','edl_inventory'],
+      ['006037051000017','Mukul Moral','380000775453','SMA - 0','1','₹9.63L','₹0.28L','stable','edl_migrated_greater_than_5_lacs','⋯'],
+      ['009437051000017','Mukul Moral','380000394907','180+','213','₹9.07L','₹7.04L','fwd','edl_migrated_greater_than_5_lacs','⋯'],
+      ['006039691000114','Mukul Moral','230000021794','SMA - 0','1','₹4.61L','₹0.15L','stable','edl_inventory','⋯'],
+      ['006036061000741','Mukul Moral','180000707493','SMA - 0','1','₹3.70L','₹0.06L','fwd','edl_migrated','⋯'],
+      ['006039691000109','Mukul Moral','231000073537','SMA - 0','1','₹3.14L','₹0.14L','stable','edl_inventory','⋯'],
+      ['006039691000126','Mukul Moral','380003808480','SMA - 1','32','₹2.71L','₹0.11L','stable','edl_inventory','⋯'],
+      ['006039691000035','Mukul Moral','380000459773','SMA - 2','62','₹2.45L','₹0.27L','fwd','edl_inventory','⋯'],
     ],
   },
 };
 
-let activeProduct='borrow';
+let activeTab='summary';
+const PRODUCT_ORDER=['borrow','cc','edi','edl'];
 
 function renderCombinedTiles(){
   const c = [
@@ -653,24 +686,28 @@ function renderCombinedTiles(){
     {k:'cmb.waiver', l:'Waiver % of Collectable Penal', v:'1.27%'},
   ];
   document.getElementById('combinedTiles').innerHTML = c.map(t=>`
-    <div class="tile combined">
+    <div class="tile">
       <div class="tl">${t.l} ${ib(t.k)}</div>
       <div class="tv">${t.v}</div>
     </div>`).join('');
 }
 
 function renderPTabs(){
-  const order=['borrow','cc','edi','edl'];
-  document.getElementById('ptabs').innerHTML = order.map(k=>{
-    const p=PRODUCTS[k];
-    return `<div class="ptab ${k===activeProduct?'active':''}" onclick="switchProduct('${k}')">
+  const tabs = [{key:'summary',label:'Summary'}, ...PRODUCT_ORDER.map(k=>({key:k,label:PRODUCTS[k].label}))];
+  document.getElementById('ptabs').innerHTML = tabs.map(t=>{
+    if(t.key==='summary'){
+      return `<div class="ptab ${activeTab==='summary'?'active':''}" onclick="switchTab('summary')">Summary</div>`;
+    }
+    const p=PRODUCTS[t.key];
+    return `<div class="ptab ${t.key===activeTab?'active':''}" onclick="switchTab('${t.key}')">
       <span class="pdot" style="background:${p.color}"></span>${p.label}
-      <span class="pc">${p.tiles[0].v}</span>
+      <span class="pc">${p.total.cases.toLocaleString('en-IN')}</span>
     </div>`;
   }).join('');
 }
 
-function switchProduct(k){ activeProduct=k; renderPTabs(); renderProductPanel(); window.scrollTo({top:document.getElementById('ptabs').offsetTop-80, behavior:'smooth'}); }
+function switchTab(k){ activeTab=k; renderPTabs(); renderMain(); window.scrollTo({top:document.getElementById('ptabs').offsetTop-80, behavior:'smooth'}); }
+function renderMain(){ activeTab==='summary' ? renderSummary() : renderCaseList(activeTab); }
 
 function flowChipCls(v){
   const s=(v||'').toString().toLowerCase();
@@ -683,35 +720,70 @@ function flowChipCls(v){
   if(s==='partial') return 'partial';
   return '';
 }
+function isFlowVal(v){ return ['fwd','stbl','norm','rb','res','resolved','paid','mindue','unpaid','partial','stable'].includes((v||'').toString().toLowerCase()); }
 
-function renderProductPanel(){
-  const p = PRODUCTS[activeProduct];
-  const tilesHtml = p.tiles.map(t=>`
-    <div class="tile">
-      <div class="tl">${t.l} ${ib(t.k)}</div>
-      <div class="tv">${t.v}</div>
-    </div>`).join('');
+/* ===== SUMMARY TAB: product-level tiles + product × bucket tables, stacked per product ===== */
+function renderSummary(){
+  const blocks = PRODUCT_ORDER.map(pk=>{
+    const p = PRODUCTS[pk];
+    const tilesHtml = p.tiles.map(t=>`
+      <div class="tile">
+        <div class="tl">${t.l} ${ib(t.k)}</div>
+        <div class="tv">${t.v}</div>
+      </div>`).join('');
 
-  const bucketRows = p.buckets.map((b,i)=>`
-    <tr>
-      <td><span class="bktcell ${b.cls}">${b.name} ${ib('crpop:'+i)}</span></td>
-      <td class="r">${b.cases.toLocaleString('en-IN')}</td>
-      <td class="r">${b.pos}</td>
-      <td class="r">${b.res}</td>
-    </tr>`).join('');
-  const totalRow = `<tr class="total">
-      <td><span class="bktcell">${p.total.name} ${ib('crpop:total')}</span></td>
-      <td class="r">${p.total.cases.toLocaleString('en-IN')}</td>
-      <td class="r">${p.total.pos}</td>
-      <td class="r">${p.total.res}</td>
-    </tr>`;
+    const bucketRows = p.buckets.map((b,i)=>`
+      <tr>
+        <td><span class="bktcell ${b.cls}">${b.name} ${ib('crpop:'+pk+':'+i)}</span></td>
+        <td class="r">${b.cases.toLocaleString('en-IN')}</td>
+        <td class="r">${b.pos}</td>
+        <td class="r">${b.res}</td>
+      </tr>`).join('');
+    const totalRow = `<tr class="total">
+        <td><span class="bktcell">${p.total.name} ${ib('crpop:'+pk+':total')}</span></td>
+        <td class="r">${p.total.cases.toLocaleString('en-IN')}</td>
+        <td class="r">${p.total.pos}</td>
+        <td class="r">${p.total.res}</td>
+      </tr>`;
+    const bucketHeadHtml = p.bucketHead.map(([label,key])=>`<th${label==='Cases'||label.includes('%')||label==='POS'?' class="r"':''}>${label}${key?ib(key):''}</th>`).join('');
 
-  const bucketHeadHtml = p.bucketHead.map(([label,key])=>`<th${label==='Cases'||label.includes('%')||label==='POS'?' class="r"':''}>${label}${key?ib(key):''}</th>`).join('');
-  const tblHeadHtml = p.tblHead.map(([label,key])=>`<th>${label}${key?ib(key):''}</th>`).join('');
+    return `
+    <div class="psumblock">
+      <div class="psum-h">
+        <span class="pdot" style="background:${p.color}"></span>
+        <span class="pname">${p.label}</span>
+        <span class="pagent">agent: ${p.agent}</span>
+      </div>
+      <div class="tileswrap"><div class="tiles">${tilesHtml}</div></div>
+      <div class="panel" style="position:relative">
+        <div class="ptitle">Metrics by ${p.bucketHead[0][0]}</div>
+        <table class="tbl" id="bktTable-${pk}">
+          <thead><tr>${bucketHeadHtml}</tr></thead>
+          <tbody>${bucketRows}${totalRow}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('productPanels').innerHTML = blocks + `
+    <div class="pop hidden" id="crPop">
+      <button class="pop-x" onclick="closePop()">&times;</button>
+      <div class="pop-h" id="crPopH">Case Resolution</div>
+      <div class="pop-s" id="crPopS">Breakdown for this bucket</div>
+      <div id="crPopBody"></div>
+    </div>`;
+}
+
+/* ===== PRODUCT TABS: case list only (filters + search, matches live Assigned Cases toolbar) ===== */
+function renderCaseList(pk){
+  const p = PRODUCTS[pk];
+  const tblHeadHtml = p.tblHead.map(([label,key],i)=>{
+    const sortable = !['Action','Comments'].includes(label);
+    return `<th>${label}${sortable?'<span class="sorticon">⇕</span>':''}${key?ib(key):''}</th>`;
+  }).join('');
   const tblRowsHtml = p.rows.map(r=>{
     const cells = r.map((cell,i)=>{
-      const isFlow = ['fwd','stbl','norm','rb','res','resolved','paid','mindue','unpaid','partial','stable'].includes((cell||'').toString().toLowerCase());
-      if(isFlow) return `<td><span class="flowchip ${flowChipCls(cell)}">${cell.toUpperCase()}</span></td>`;
+      if(isFlowVal(cell)) return `<td><span class="flowchip ${flowChipCls(cell)}">${cell.toUpperCase()}</span></td>`;
       if(i===0) return `<td class="mono">${cell}</td>`;
       return `<td>${cell}</td>`;
     }).join('');
@@ -719,44 +791,43 @@ function renderProductPanel(){
   }).join('');
 
   document.getElementById('productPanels').innerHTML = `
-    <div class="panel" style="border-color:${p.color}22">
-      <div class="ptitle" style="justify-content:space-between">
-        <span>${p.label} Portfolio</span>
-        <span style="font-size:11.5px;color:var(--muted);font-weight:600">agent: ${p.agent}</span>
-      </div>
-      <div class="tiles" style="margin-bottom:0">${tilesHtml}</div>
-    </div>
-
     <div class="panel">
-      <div class="ptitle">Metrics by ${p.bucketHead[0][0]}</div>
-      <table class="tbl" id="bktTable">
-        <thead><tr>${bucketHeadHtml}</tr></thead>
-        <tbody>${bucketRows}${totalRow}</tbody>
-      </table>
-      <div class="pop hidden" id="crPop">
-        <button class="pop-x" onclick="closePop()">&times;</button>
-        <div class="pop-h" id="crPopH">Case Resolution</div>
-        <div class="pop-s">Breakdown for this ${p.bucketHead[0][0].toLowerCase()}</div>
-        <div id="crPopBody"></div>
+      <div class="caselisthead">
+        <div class="ptitle">Assigned Cases (${p.rows.length})</div>
+        <div class="filterbar">
+          <button class="fbtn" onclick="toast('Tags filter')">Tags <span class="car">▾</span></button>
+          <button class="fbtn" onclick="toast('Case Category filter')">Case Category <span class="car">▾</span></button>
+          <button class="fbtn" onclick="toast('More filters')">More Filters <span class="car">▾</span><span class="dot"></span></button>
+          <div class="fsearch"><span class="mag" style="width:13px;height:13px;border:2px solid #B7BCCB;border-radius:50%;position:relative;flex:none"></span>
+            <input placeholder="Filter by User Name or UUID" onkeydown="if(event.key==='Enter')toast('Filtering…')">
+          </div>
+          <button class="frefresh" onclick="toast('Refreshed')">⟲ Refresh Tickets</button>
+        </div>
       </div>
-    </div>
-
-    <div class="panel">
-      <div class="ptitle">Case List (sample)</div>
-      <table class="tbl">
-        <thead><tr>${tblHeadHtml}</tr></thead>
-        <tbody>${tblRowsHtml}</tbody>
-      </table>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>${tblHeadHtml}</tr></thead>
+          <tbody>${tblRowsHtml}</tbody>
+        </table>
+      </div>
+      <div class="pagerow">
+        <span>Showing page 1 of 1</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="pg">&#8249;</span><span class="pg on">1</span><span class="pg">&#8250;</span>
+          <select class="rowselect"><option>Show 10 rows</option><option>Show 25 rows</option><option>Show 50 rows</option></select>
+        </div>
+      </div>
     </div>`;
 }
 
-function showPop(e,key){
+function showPop(e,pk,key){
   e.stopPropagation();
   document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
   e.target.classList.add('on');
-  const p = PRODUCTS[activeProduct];
+  const p = PRODUCTS[pk];
   const src = key==='total' ? p.total : p.buckets[key];
-  document.getElementById('crPopH').textContent='Case Resolution · '+src.name;
+  document.getElementById('crPopH').textContent='Case Resolution · '+p.label+' · '+src.name;
+  document.getElementById('crPopS').textContent='Breakdown for this '+p.bucketHead[0][0].toLowerCase();
   document.getElementById('crPopBody').innerHTML=Object.entries(src.cr)
     .map(([k,v])=>`<div class="pr"><span>${k}</span><span class="n">${v.toLocaleString('en-IN')}</span></div>`).join('');
   const pop=document.getElementById('crPop'); pop.classList.remove('hidden');
@@ -767,22 +838,18 @@ function showPop(e,key){
 }
 function closePop(){const p=document.getElementById('crPop');if(p)p.classList.add('hidden');}
 
-/* intercept the crpop:N info buttons before the generic showInfo handler */
-const _origIb = ib;
+/* intercept the crpop:product:N info buttons before the generic showInfo handler */
 window.showInfo = function(e){
   const k = e.target.dataset.k;
   if(k && k.startsWith('crpop:')){
     e.stopPropagation();
-    const key = k.slice(6);
-    showPop(e, key==='total'?'total':Number(key));
+    const [,pk,key] = k.split(':');
+    showPop(e, pk, key==='total'?'total':Number(key));
     return;
   }
-  _showInfoReal(e);
-};
-function _showInfoReal(e){
   document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
   e.target.classList.add('on');
-  const d = INFO[e.target.dataset.k];
+  const d = INFO[k];
   if(!d) return;
   const r = e.target.getBoundingClientRect();
   let left = Math.min(r.left, window.innerWidth-316);
@@ -795,7 +862,7 @@ function _showInfoReal(e){
       <div class="it-f">${d.f.replace(/\n/g,'<br>')}</div>
       ${d.n?`<div class="it-n">${d.n}</div>`:''}
     </div>`;
-}
+};
 
 // ===== render repayments =====
 const REPAYMENTS = {
@@ -1055,7 +1122,7 @@ document.addEventListener('click',(e)=>{if(!e.target.closest('.itip')&&!e.target
 // init
 renderCombinedTiles();
 renderPTabs();
-renderProductPanel();
+renderMain();
 </script>
 </body>
 </html>
