@@ -18,13 +18,13 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 a{color:var(--brand);text-decoration:none}
 
 /* ===== nav ===== */
-.nav{display:flex;align-items:center;gap:18px;padding:12px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;flex-wrap:wrap}
+.nav{display:flex;align-items:center;gap:14px;padding:10px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px}
 .logo .dot{width:25px;height:25px;border-radius:50%;background:linear-gradient(135deg,#6C5CE7,#8E7BFB)}
 .pill{border:1px solid #D9DCEA;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--brand)}
 .navlink{font-size:14px;color:var(--ink2);font-weight:600;padding:6px 4px;border-bottom:2px solid transparent}
 .navlink.active{color:var(--brand);border-bottom-color:var(--brand)}
-.nbtn{border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.nbtn{border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .nbtn.primary{background:var(--brand);color:#fff}
 .nbtn.primary:hover{background:var(--brand-d)}
 .nbtn.ghost{background:#fff;color:var(--brand);border:1.5px solid #D9DCEA}
@@ -34,38 +34,70 @@ a{color:var(--brand);text-decoration:none}
 .user{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);font-weight:600}
 .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6C5CE7,#8E7BFB)}
 
-.page{max-width:1320px;margin:0 auto;padding:22px 22px 80px}
+/* nav search (moved from page body) */
+.navsearch{display:flex;align-items:center;gap:8px;background:#F7F7FC;border:1.4px solid #E4E6F1;border-radius:22px;padding:7px 14px;width:270px;flex:none}
+.navsearch:focus-within{border-color:var(--brand);background:#fff}
+.navsearch .mag{width:14px;height:14px;border:2px solid #B7BCCB;border-radius:50%;position:relative;flex:none}
+.navsearch .mag:after{content:'';position:absolute;width:6px;height:2px;background:#B7BCCB;transform:rotate(45deg);bottom:-2px;right:-3px;border-radius:2px}
+.navsearch input{border:none;outline:none;flex:1;font-size:13px;color:var(--ink);background:none;min-width:0}
+.navsearch input::placeholder{color:var(--faint)}
+@media(max-width:1180px){.navsearch{width:190px}}
 
-/* ===== search ===== */
-.topsearch{display:flex;justify-content:center;margin-bottom:22px}
-.search{width:760px;max-width:100%;display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #D9DCEA;border-radius:30px;padding:12px 20px;box-shadow:0 4px 18px rgba(91,79,232,.06)}
-.search:focus-within{border-color:var(--brand)}
-.search .mag{width:17px;height:17px;border:2px solid #B7BCCB;border-radius:50%;position:relative;flex:none}
-.search .mag:after{content:'';position:absolute;width:7px;height:2px;background:#B7BCCB;transform:rotate(45deg);bottom:-2px;right:-4px;border-radius:2px}
-.search input{border:none;outline:none;flex:1;font-size:15px;color:var(--ink);background:none}
-.search input::placeholder{color:var(--faint)}
+.page{max-width:1360px;margin:0 auto;padding:22px 22px 80px}
 
-.h1{font-size:15px;font-weight:800;margin-bottom:2px}
+.h1{font-size:16px;font-weight:800;margin-bottom:2px}
 .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
 
 .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;position:relative;margin-bottom:16px}
-.ptitle{font-size:15px;font-weight:800;margin-bottom:14px}
+.ptitle{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* ===== summary tiles ===== */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.tile .tl{font-size:12px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.tile .tv{font-size:24px;font-weight:800;color:var(--ink)}
+.tile.combined{background:linear-gradient(160deg,#FBFAFF,#fff)}
+@media(max-width:900px){.tiles{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== product tabs ===== */
+.ptabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.ptab{padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--ink2);background:#fff;border:1.4px solid var(--line);display:flex;align-items:center;gap:8px;cursor:pointer}
+.ptab .pc{background:var(--line2);color:var(--muted);font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px}
+.ptab.active{color:var(--brand);border-color:var(--brand-ln);background:var(--brand-bg)}
+.ptab.active .pc{background:var(--brand);color:#fff}
+.pdot{width:7px;height:7px;border-radius:50%;flex:none}
 
 /* ===== tables ===== */
-.tbl{width:100%;border-collapse:collapse;font-size:14px}
-.tbl th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th .info{margin-left:2px}
 .tbl th.r,.tbl td.r{text-align:right;font-variant-numeric:tabular-nums}
-.tbl td{padding:12px 14px;border-bottom:1px solid var(--line2);color:var(--ink2)}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--line2);color:var(--ink2)}
 .tbl tbody tr:last-child td{border-bottom:none}
 .tbl tbody tr:hover td{background:#FAFAFE}
 .bktcell{font-weight:800;letter-spacing:.04em;display:inline-flex;align-items:center;gap:8px}
-.b0{color:var(--green)}.b1{color:#2156E8}.b2{color:var(--amber)}.b3{color:var(--red)}.b4{color:#7A2E9C}
-.info{width:18px;height:18px;border-radius:50%;border:1.4px solid #C3C8D8;color:var(--muted);font-size:11px;font-weight:800;font-style:italic;display:inline-flex;align-items:center;justify-content:center;font-family:Georgia,serif;cursor:pointer}
+.b0{color:var(--green)}.b1{color:#2156E8}.b2{color:var(--amber)}.b3{color:var(--red)}.b4{color:#7A2E9C}.b5{color:#8A90A6}
+.info{width:16px;height:16px;border-radius:50%;border:1.4px solid #C3C8D8;color:var(--muted);font-size:10px;font-weight:800;font-style:italic;display:inline-flex;align-items:center;justify-content:center;font-family:Georgia,serif;cursor:pointer;flex:none}
 .info:hover,.info.on{border-color:var(--brand);color:var(--brand);background:var(--brand-bg)}
 .tbl tr.total td{background:var(--brand-bg);font-weight:800;color:var(--ink);border-top:2px solid var(--brand-ln);border-bottom:none}
 .tbl tr.total .bktcell{color:var(--brand)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.tagchip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;background:var(--line2);color:var(--ink2)}
+.flowchip{display:inline-block;padding:2px 9px;border-radius:14px;font-size:11px;font-weight:700}
+.flowchip.fwd{background:var(--red-bg);color:var(--red)}
+.flowchip.res,.flowchip.paid,.flowchip.mindue{background:var(--green-bg);color:var(--green)}
+.flowchip.stbl,.flowchip.stable{background:#EEF3FF;color:#2156E8}
+.flowchip.rb,.flowchip.norm{background:#F3EEFF;color:var(--purple)}
+.flowchip.unpaid,.flowchip.partial{background:#FEF7E0;color:#B7860B}
 
-/* popover */
+/* generic floating info tooltip (works anywhere on the page) */
+.itip{position:fixed;width:300px;background:#1E2233;color:#fff;border-radius:12px;box-shadow:0 14px 38px rgba(20,22,40,.35);padding:14px 16px;z-index:100;font-size:12.5px;line-height:1.5}
+.itip .it-k{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#9FA6FF;margin-bottom:6px}
+.itip .it-f{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,.08);border-radius:7px;padding:8px 10px;margin-bottom:8px;color:#E3E6FF;word-break:break-word;font-size:12px}
+.itip .it-n{color:#C7CAE0}
+.itip .it-x{position:absolute;top:8px;right:10px;color:#8188C0;font-size:15px;cursor:pointer}
+
+/* popover (bucket resolution breakdown) */
 .pop{position:absolute;width:290px;background:#fff;border:1px solid var(--brand-ln);border-radius:12px;box-shadow:0 12px 34px rgba(30,34,51,.18);padding:14px 16px;z-index:20}
 .pop-h{font-size:13.5px;font-weight:800;margin-bottom:2px}
 .pop-s{font-size:11px;color:var(--muted);margin-bottom:10px}
@@ -163,6 +195,8 @@ a{color:var(--brand);text-decoration:none}
   .rlayout{grid-template-columns:1fr}
   .pactions{margin-left:0;width:100%}
   .page{padding:16px 14px 80px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .navsearch{order:10;width:100%}
 }
 </style>
 </head>
@@ -174,41 +208,31 @@ a{color:var(--brand);text-decoration:none}
   <span class="pill">EXTERNAL</span>
   <span class="navlink active" id="nav-home" onclick="go('home')">Home</span>
   <span class="navlink" id="nav-appr" onclick="go('approvals')">Approvals</span>
+  <span class="sp"></span>
+  <form class="navsearch" onsubmit="doSearch(event)">
+    <span class="mag"></span>
+    <input id="searchInput" placeholder="Search UUID, phone or loan / account no…" value="8459090480">
+  </form>
   <button class="nbtn primary" onclick="downloadPortfolio()">&#8681; Download Agent Portfolio</button>
   <button class="nbtn ghost" onclick="openFeedback()">&#8682; Upload Feedback</button>
-  <span class="sp"></span>
   <span class="tag-admin">ADMIN</span>
   <span class="user"><span class="avatar"></span>agency.admin</span>
 </div>
 
 <!-- ===== HOME ===== -->
 <div class="page" id="view-home">
-  <div class="topsearch">
-    <form class="search" onsubmit="doSearch(event)">
-      <span class="mag"></span>
-      <input id="searchInput" placeholder="Search a customer by UUID, phone or loan / account number…" value="8459090480">
-    </form>
-  </div>
 
-  <div class="h1">Agency Overview</div>
-  <div class="sub">Credit Cards · PAN India Recovery Agency</div>
+  <div class="h1">My Portfolio — Collection</div>
+  <div class="sub">Kaustubh Shirsath · combined book across Borrow, Credit Card, EDI &amp; EDL &nbsp;·&nbsp; agent-level view, one row per product tab below</div>
 
-  <div class="panel">
-    <div class="ptitle">Metrics by Bucket</div>
-    <table class="tbl" id="bktTable">
-      <thead><tr>
-        <th>Bucket</th><th class="r">Total Cases</th><th class="r">Total POS</th>
-        <th class="r">Daily Resolution Rate</th><th class="r">MTD Resolution</th>
-      </tr></thead>
-      <tbody></tbody>
-    </table>
-    <div class="pop hidden" id="crPop">
-      <button class="pop-x" onclick="closePop()">&times;</button>
-      <div class="pop-h" id="crPopH">Case Resolution</div>
-      <div class="pop-s">Breakdown for this bucket</div>
-      <div id="crPopBody"></div>
-    </div>
-  </div>
+  <!-- ===== combined strip across all 4 products ===== -->
+  <div class="tiles" id="combinedTiles"></div>
+
+  <!-- ===== product tabs ===== -->
+  <div class="ptabs" id="ptabs"></div>
+
+  <div id="productPanels"></div>
+
 </div>
 
 <!-- ===== PROFILE ===== -->
@@ -432,18 +456,348 @@ a{color:var(--brand);text-decoration:none}
 <!-- modal mount -->
 <div id="modalMount"></div>
 <div class="toast" id="toast"></div>
+<div id="itipMount"></div>
 
 <script>
-// ===== dummy data =====
-const BUCKETS = [
-  {k:'BKT0',cls:'b0',cases:1946,pos:'₹1.02 Cr',daily:'9.1%',mtd:'52.4%',cr:{Normal:1024,'Resolved Min Due':318,Forward:196,Stable:241,Rollback:62,'Partial Payment':105}},
-  {k:'BKT1',cls:'b1',cases:1120,pos:'₹0.94 Cr',daily:'6.2%',mtd:'41.0%',cr:{Normal:560,'Resolved Min Due':180,Forward:120,Stable:150,Rollback:48,'Partial Payment':62}},
-  {k:'BKT2',cls:'b2',cases:648,pos:'₹0.71 Cr',daily:'4.8%',mtd:'30.2%',cr:{Normal:280,'Resolved Min Due':92,Forward:78,Stable:96,Rollback:44,'Partial Payment':58}},
-  {k:'BKT3',cls:'b3',cases:312,pos:'₹0.58 Cr',daily:'3.1%',mtd:'19.5%',cr:{Normal:110,'Resolved Min Due':38,Forward:52,Stable:60,Rollback:22,'Partial Payment':30}},
-  {k:'BKT4+',cls:'b4',cases:156,pos:'₹0.46 Cr',daily:'1.9%',mtd:'11.8%',cr:{Normal:40,'Resolved Min Due':14,Forward:32,Stable:40,Rollback:17,'Partial Payment':13}},
-];
-const TOTAL = {k:'Total',cases:'4,182',pos:'₹3.71 Cr',daily:'6.4%',mtd:'38.2%',cr:{Normal:2014,'Resolved Min Due':612,Forward:438,Stable:521,Rollback:193,'Partial Payment':404}};
+/* =========================================================================
+   INFO MAP — every (i) button on the home page reads from here.
+   These are the REAL backend field names / calculations that would back
+   each element once this screen is wired to live APIs (verified against
+   cops-svc source + EMR table schemas — see collections_agent knowledge base).
+   ========================================================================= */
+const INFO = {
+  // ---- combined strip ----
+  'cmb.cases': {t:'Total Cases (all products)', f:'COUNT(*) across allocation_tele_calling / allocation_field\nWHERE agent_email = :agent AND product IN (BORROW,CC,EDI,EDL)\nAND status NOT IN (onHold) AND outcome NOT IN (reassigned, carryForward)', n:'GET /allocations/agents/portfolio today returns Borrow only — needs a `product` filter added to FilterQueryDTO to union all 4.'},
+  'cmb.value': {t:'Total Value at Risk', f:'Borrow: SUM(pos)\n+ CC: SUM(remaining_bill_amount)/100\n+ EDI: SUM(pos)\n+ EDL: SUM(principal_outstanding)\n(₹, summed across the 4 source MIS tables)', n:'Not one field — each product\'s "amount at risk" means something different (POS vs total bill vs outstanding). Summed here for one headline number only.'},
+  'cmb.res': {t:'Blended Resolution %', f:'Σ resolved_cases ÷ Σ total_cases\nresolved defined per product:\n Borrow: current_flow <> \'FWD\'\n CC: bill status IN (MINDUE_PAID,PAID)\n EDI: current_flow IN (Resolved,STBL,RB)\n EDL: outcome <> \'FWD\'', n:'"Resolved" isn\'t the same concept per product — this is a weighted rollup for a single glance, not a real single metric anywhere in the backend today.'},
+  'cmb.waiver': {t:'Waiver % of Collectable Penal', f:'Numerator: SUM(copsdb_gold.waiver_data.total_wiver)\n  WHERE waiver_requested_by = :agent_email\nDenominator: SUM(late_penalty_payable + late_interest_payable)\n  FROM lmsdb_gold.lmsdata_loan_snapshot_entity\n  JOIN on this agent\'s allocated uuids (micro units ÷1e6)', n:'Borrow-only right now: 10 waivers · ₹0.25L waived ÷ ₹19.63L collectable = 1.27%. CC waivers go through the separate cc-waiver/TaskOps module, not this table — would need a UNION once CC waiver-requester attribution is added.'},
 
+  // ---- Borrow tiles ----
+  'bor.cases': {t:'Total Cases', f:"COUNT(*) FROM manual_production_tables.current_month_collections_mis\nWHERE tc_email_id = :agent AND mis_date = (latest)", n:'Live today via GET /agent-portfolio/agent-summary (ComputedSummaryDTO.totalCases) — already product-agnostic.'},
+  'bor.pos': {t:'Total POS', f:'SUM(pos) — same filter as above.\npos = principal outstanding, already in ₹ (no unit conversion).', n:'Backs ComputedSummaryDTO.totalPOS.'},
+  'bor.res': {t:'Cycle Resolution %', f:"COUNT(current_flow <> 'FWD') ÷ COUNT(*)\ncurrent_flow ∈ {FWD, NORM, STBL, RB} — cumulative since cycle start (6th→5th).", n:'Filter on current_bucket, never source_bucket (source_bucket undercounts ~2×) — per analyst KB.'},
+  'bor.fwd': {t:'Forward Rate', f:"COUNT(current_flow = 'FWD') ÷ COUNT(*)\n— cases that have NOT paid and are rolling to a worse bucket this cycle.", n:'Inverse of resolution; flags how much of this book is actively deteriorating vs stuck.'},
+  'bor.col.bucket': {t:'Bucket', f:'current_bucket — Bkt 0 … Bkt 6+ (ALLOCATION_BUCKET enum in cops-svc). Month-DPD semantics: Bkt0 = DPD≤30, +30 days per step.'},
+  'bor.col.dpd': {t:'DPD', f:'dpd column — days past due as of mis_date.'},
+  'bor.col.pos': {t:'POS', f:'pos — principal outstanding, ₹ (no unit conversion needed).'},
+  'bor.col.emi': {t:'Overdue Amount', f:'emi — overdue EMI amount, ₹. This is the "what clears the immediate due" figure, distinct from pos.'},
+  'bor.col.profile': {t:'Profile Type', f:'profile_category — salaried A/B/C, student, freelancer.'},
+  'bor.col.flow': {t:'Flow', f:"current_flow — FWD (unresolved) / NORM (normalized) / STBL (stabilised) / RB (rolled back, improved a bucket)."},
+  'bor.col.disp': {t:'Last Disposition', f:'latest_disposition — most recent call outcome (PAID / RNR / NC / Voicemail / PTP…), sourced from copsdb_gold.collection_note joined by uuid.'},
+
+  // ---- CC tiles ----
+  'cc.cases': {t:'Total Cases', f:'COUNT(DISTINCT uuid) FROM manual_production_tables.current_month_collections_mis_cc\nWHERE tc_email_id = :agent AND mis_Date = (latest)', n:'CC MIS is bill-level — always COUNT(DISTINCT uuid) for user counts, never COUNT(*).'},
+  'cc.bill': {t:'Total Remaining Bill', f:'SUM(remaining_bill_amount) / 100\n— stored in paise, ÷100 for ₹. Includes principal + interest + charges + GST.', n:'This is the "full payoff" number — distinct from Min Due below.'},
+  'cc.mindue': {t:'Min-Due Resolution %', f:"COUNT(status IN ('MINDUE_PAID','PAID')) ÷ COUNT(*)\nstatus reclassified from bill_payment_status per the PARTIAL_PAID→MINDUE_PAID rule (bill_amount − min_due_amount ≥ remaining_bill_amount).", n:"CC's real intermediate state — MINDUE_RESOLVED is already a first-class allocation outcome in cops-svc (AgentSummaryComputationServiceV2), Borrow has no equivalent."},
+  'cc.full': {t:'Full Resolution %', f:"COUNT(status = 'PAID') ÷ COUNT(*)\n— fully cleared bills only, stricter than min-due resolution above."},
+  'cc.col.bucket': {t:'Bucket', f:'current_bucket — same Bkt0…6+ convention as Borrow (CC bills cycle monthly too, unlike EDI).'},
+  'cc.col.dpd': {t:'DPD', f:'dpd — days past due on the bill.'},
+  'cc.col.bill': {t:'Remaining Bill', f:'remaining_bill_amount / 100 (paise→₹). Total payoff figure.'},
+  'cc.col.mindue': {t:'Min Due', f:'min_due_amount / 100 (paise→₹). Minimum to avoid further DPD movement.'},
+  'cc.col.status': {t:'Status', f:'bill_payment_status, reclassified: MINDUE_PAID / PAID / PARTIAL_PAID / UNPAID.'},
+  'cc.col.profile': {t:'Profile Type', f:'profile_type — salaried / freelancer / student.'},
+
+  // ---- EDI tiles ----
+  'edi.cases': {t:'Total Cases', f:'COUNT(*) FROM s3_tool_propagator.collections_edi_mis_test\nWHERE tc_email = :agent AND mis_date = (latest)', n:'EDI = merchant daily-instalment product — table is genuinely different from the Borrow/CC MIS, not just a filter.'},
+  'edi.pos': {t:'Total Outstanding', f:'SUM(pos) — EDI has no separate "bill" concept like CC; pos is the whole outstanding.'},
+  'edi.res': {t:'Resolution %', f:"COUNT(current_flow IN ('Resolved','STBL','RB')) ÷ COUNT(*)\n— literal cumulative-since-day-1, no monthly cycle anchor exists for this product."},
+  'edi.dpd': {t:'Avg DPD', f:'AVG(dpd) — raw day count, not a bucket. EDI DPD accrues from day 1 of missed daily instalment, so "days" is the real urgency signal here, not a month-bucket label.'},
+  'edi.col.band': {t:'DPD Band', f:'morning_bucket — free-text day-range label ("DPD 1 to 2", "DPD 7 to 14", "DPD 30+"), computed upstream in the daily EDI MIS job. NOT the same enum as Borrow\'s ALLOCATION_BUCKET — forcing EDI into Bkt0-6+ would misrepresent urgency (a Bkt0-equivalent EDI case can be DPD 25 already).'},
+  'edi.col.dpd': {t:'DPD (days)', f:'dpd — exact day count, the primary sort key for this product.'},
+  'edi.col.sub': {t:'Sub-Category', f:'sub_category — merchant industry (RETAIL / MANUFACTURING / SERVICES…). Changes the collections conversation script.'},
+  'edi.col.turnover': {t:'Turnover Band', f:'estimated_annual_turnover — merchant\'s declared annual turnover band.'},
+  'edi.col.pos': {t:'POS', f:'pos — total outstanding, ₹.'},
+  'edi.col.status': {t:'Status', f:'current_flow — FWD / Resolved / STBL / RB.'},
+  'edi.col.disp': {t:'Last Disposition', f:'latest_disposition (uncontacted / RNR / PTP / PAID…).'},
+
+  // ---- EDL tiles ----
+  'edl.cases': {t:'Total Cases', f:"COUNT(*) FROM s3_tool_propagator.bank_collections_mis\nWHERE agent_id = :agent AND loan_account_status='Active' AND bucket <> 'Standard'\nAND product_name IN (edl_inventory, edl_migrated, edl_property, micro_edl)", n:'EDL sits inside the same bank_collections_mis table as all other CBS/merchant products — scoped here purely by product_name.'},
+  'edl.pos': {t:'Total POS', f:'SUM(principal_outstanding) — ₹, no unit conversion.'},
+  'edl.res': {t:'Resolution %', f:"COUNT(outcome <> 'FWD') ÷ COUNT(*)\noutcome ∈ {Norm, RB, Stable, FWD} — Bank-native outcome column, same as EDL/Bank loans generally."},
+  'edl.overdue': {t:'Total Overdue', f:'SUM(total_overdue) — ₹, overdue amount incl. late interest/penalty.'},
+  'edl.col.bucket': {t:'Bucket', f:"bucket — Bank-native SMA/SS convention: 'SMA - 0' / 'SMA - 1' / 'SMA - 2' / 'SS - 1..3' / '180+'. A THIRD distinct bucket vocabulary from Borrow's Bkt0-6+ and EDI's DPD-day bands — do not normalize these into one label set in the UI."},
+  'edl.col.dpd': {t:'DPD', f:'dpd column.'},
+  'edl.col.pos': {t:'POS', f:'principal_outstanding, ₹.'},
+  'edl.col.overdue': {t:'Overdue', f:'total_overdue, ₹ — incl. late interest + penalty.'},
+  'edl.col.outcome': {t:'Outcome', f:"outcome — Norm / RB (rolled back to a better bucket) / Stable / FWD."},
+  'edl.col.product': {t:'Product', f:'product_name — edl_inventory / edl_migrated / edl_property / micro_edl (raw MIS value).'},
+};
+
+/* generic info-tooltip renderer, works for any (i) button anywhere on the page */
+function ib(key){ return `<span class="info" data-k="${key}" onclick="showInfo(event)">i</span>`; }
+function closeInfo(){document.getElementById('itipMount').innerHTML='';document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));}
+
+/* =========================================================================
+   REAL DATA — pulled from EMR this session, one agent per product
+   (Borrow: sudhansu.sahu.cw@slicebank.com · CC: anurag.s.cw@slicebank.com
+    EDI: praveen.jadhav.cw@slicebank.com · EDL: agent_id 104380 / Mukul Moral)
+   presented here as ONE agent's combined multi-product portfolio.
+   ========================================================================= */
+const PRODUCTS = {
+  borrow:{
+    label:'Borrow', color:'#2A78D6', agent:'sudhansu.sahu.cw@slicebank.com',
+    tiles:[
+      {k:'bor.cases', l:'Total Cases', v:'480'},
+      {k:'bor.pos', l:'Total POS', v:'₹63.37L'},
+      {k:'bor.res', l:'Cycle Resolution %', v:'9.4%'},
+      {k:'bor.fwd', l:'Forward Rate', v:'90.6%'},
+    ],
+    bucketHead:[['Bucket','bor.col.bucket'],['Cases',null],['POS','bor.col.pos'],['Resolution %',null]],
+    buckets:[
+      {name:'Bkt 6', cls:'b3', cases:478, pos:'₹62.11L', res:'9.0%', cr:{FWD:435,NORM:20,STBL:20,RB:3}},
+      {name:'Bkt 6+', cls:'b4', cases:2, pos:'₹1.26L', res:'100.0%', cr:{NORM:1,STBL:1}},
+    ],
+    total:{name:'Total', cases:480, pos:'₹63.37L', res:'9.4%', cr:{FWD:435,NORM:21,STBL:21,RB:3}},
+    tblHead:[['UUID',null],['Bucket','bor.col.bucket'],['DPD','bor.col.dpd'],['POS','bor.col.pos'],['Overdue (EMI)','bor.col.emi'],['Profile','bor.col.profile'],['Flow','bor.col.flow'],['Last Disposition','bor.col.disp']],
+    rows:[
+      ['1aa8a820-8bcd-11ec-b470-b392213adebc','Bkt 6','184','₹1.90L','₹1.88L','salaried A','fwd','PAID'],
+      ['0cbc0270-4aa5-11ec-a2b4-934f7559cd96','Bkt 6','184','₹1.54L','₹1.24L','salaried A','fwd','RNR'],
+      ['4fc34566-eb96-4189-91fa-9129b3e5e59c','Bkt 6','184','₹1.02L','₹0.80L','salaried B','stbl','PAID'],
+      ['60807741-4181-404e-a344-8e10280ec575','Bkt 6+','215','₹0.99L','₹0.97L','salaried C','norm','—'],
+      ['77f20f38-8c81-4350-856e-93ea5f93f4ee','Bkt 6','184','₹0.88L','₹0.76L','salaried B','fwd','RNR'],
+      ['dd826370-98c2-11ec-a1bb-b184eb30bef7','Bkt 6','184','₹0.79L','₹0.71L','salaried B','fwd','NC'],
+      ['688d01c0-cf44-11ec-b198-5b235e99a6d8','Bkt 6','184','₹0.69L','₹0.66L','student','fwd','RNR'],
+    ],
+  },
+  cc:{
+    label:'Credit Card', color:'#0A7C4E', agent:'anurag.s.cw@slicebank.com',
+    tiles:[
+      {k:'cc.cases', l:'Total Cases', v:'373'},
+      {k:'cc.bill', l:'Total Remaining Bill', v:'₹59.91L'},
+      {k:'cc.mindue', l:'Min-Due Resolution %', v:'81.8%'},
+      {k:'cc.full', l:'Full Resolution %', v:'18.8%'},
+    ],
+    bucketHead:[['Bucket','bor.col.bucket'],['Cases',null],['Remaining Bill','cc.col.bill'],['Min-Due Res %',null]],
+    buckets:[
+      {name:'Bkt 0', cls:'b0', cases:364, pos:'₹58.62L', res:'81.3%', cr:{MINDUE_PAID:227,PAID:69,UNPAID:67,PARTIAL_PAID:1}},
+      {name:'Bkt 1', cls:'b1', cases:4, pos:'₹1.02L', res:'100.0%', cr:{MINDUE_PAID:4}},
+      {name:'Bkt 2', cls:'b2', cases:2, pos:'₹0.19L', res:'100.0%', cr:{MINDUE_PAID:2}},
+      {name:'Bkt 3', cls:'b3', cases:3, pos:'₹0.12L', res:'100.0%', cr:{MINDUE_PAID:2,PAID:1}},
+    ],
+    total:{name:'Total', cases:373, pos:'₹59.91L', res:'81.8%', cr:{MINDUE_PAID:235,PAID:70,UNPAID:67,PARTIAL_PAID:1}},
+    tblHead:[['UUID',null],['Bucket','bor.col.bucket'],['DPD','cc.col.dpd'],['Remaining Bill','cc.col.bill'],['Min Due','cc.col.mindue'],['Status','cc.col.status'],['Profile Type','cc.col.profile']],
+    rows:[
+      ['ae59b276-af7d-48f8-b8a8-43828454b3f3','Bkt 0','1','₹2.74L','₹0.42L','mindue','freelancer'],
+      ['89d13239-738e-4027-b115-2f36dd7fbff2','Bkt 0','1','₹2.23L','₹0.43L','unpaid','freelancer'],
+      ['e413e520-7ecc-11ec-9dac-1730a0238bae','Bkt 0','1','₹1.24L','₹0.13L','mindue','salaried'],
+      ['996cf72a-d64f-49b5-ae79-720818c75f77','Bkt 0','1','₹1.05L','₹0.12L','mindue','salaried'],
+      ['17263b1b-58ab-4b82-8d07-73638b1b1930','Bkt 0','1','₹1.04L','₹0.50L','mindue','salaried'],
+      ['414f49f5-9328-4539-86ee-96d76b5768c3','Bkt 0','1','₹0.96L','₹0.08L','mindue','salaried'],
+      ['e50525e5-fa27-427e-b2be-bdbac0a94df2','Bkt 0','1','₹0.93L','₹0.09L','mindue','salaried'],
+    ],
+  },
+  edi:{
+    label:'EDI', color:'#EB6834', agent:'praveen.jadhav.cw@slicebank.com',
+    tiles:[
+      {k:'edi.cases', l:'Total Cases', v:'66'},
+      {k:'edi.pos', l:'Total Outstanding', v:'₹83.91L'},
+      {k:'edi.res', l:'Resolution %', v:'48.5%'},
+      {k:'edi.dpd', l:'Avg DPD', v:'~13 days'},
+    ],
+    bucketHead:[['DPD Band','edi.col.band'],['Cases',null],['POS','edi.col.pos'],['Resolution %',null]],
+    buckets:[
+      {name:'DPD 1 to 2', cls:'b0', cases:34, pos:'₹41.49L', res:'85.3%', cr:{Resolved:21,STBL:8,FWD:5}},
+      {name:'DPD 3 to 6', cls:'b1', cases:3, pos:'₹4.89L', res:'33.3%', cr:{STBL:1,FWD:2}},
+      {name:'DPD 7 to 14', cls:'b2', cases:9, pos:'₹12.39L', res:'11.1%', cr:{RB:1,FWD:8}},
+      {name:'DPD 15 to 30', cls:'b3', cases:13, pos:'₹17.15L', res:'7.7%', cr:{RB:1,FWD:12}},
+      {name:'DPD 30+', cls:'b4', cases:7, pos:'₹7.99L', res:'0.0%', cr:{FWD:7}},
+    ],
+    total:{name:'Total', cases:66, pos:'₹83.91L', res:'48.5%', cr:{Resolved:21,STBL:9,FWD:34,RB:2}},
+    tblHead:[['UUID / CIF',null],['DPD Band','edi.col.band'],['DPD','edi.col.dpd'],['Sub-Category','edi.col.sub'],['Turnover','edi.col.turnover'],['POS','edi.col.pos'],['Status','edi.col.status'],['Last Disposition','edi.col.disp']],
+    rows:[
+      ['c63370e1-29cd-4260-a1ad-f63d8ebae8bd / 380004090416','DPD 30+','141','MANUFACTURING','₹5-10L','₹0.23L','fwd','uncontacted'],
+      ['e42892f1-637b-44a8-8b44-2a1c0933ee59 / 380002887960','DPD 30+','70','SERVICES','₹50L-1Cr','₹1.96L','fwd','uncontacted'],
+      ['8f5a4a51-1ad7-4c5f-afb1-5a09cbe5c13c / 380004301942','DPD 30+','38','RETAIL','₹10-20L','₹0.76L','fwd','RNR'],
+      ['2d252eda-e10b-4d6c-8e09-74b307277bfe / 380001137383','DPD 30+','35','GROCERY','₹5-10L','₹0.28L','fwd','PTP'],
+      ['66f900ce-836c-4c8d-b331-cf29078f1e68 / 380004233089','DPD 30+','34','HEALTH','₹5-10L','₹3.94L','fwd','RNR'],
+      ['905f960e-e9de-4b2a-9dca-11c91565e299 / 380002867888','DPD 15 to 30','22','RETAIL','₹50L-1Cr','₹1.10L','fwd','PTP'],
+      ['30681991-e38d-4645-b1ba-9c5c11ab0f92 / 380003142314','DPD 15 to 30','22','FOOD','₹10-20L','₹2.42L','res','PAID'],
+    ],
+  },
+  edl:{
+    label:'EDL', color:'#6B21A8', agent:'Mukul Moral (104380)',
+    tiles:[
+      {k:'edl.cases', l:'Total Cases', v:'34'},
+      {k:'edl.pos', l:'Total POS', v:'₹71.85L'},
+      {k:'edl.res', l:'Resolution %', v:'73.5%'},
+      {k:'edl.overdue', l:'Total Overdue', v:'₹13.30L'},
+    ],
+    bucketHead:[['Bucket','edl.col.bucket'],['Cases',null],['POS','edl.col.pos'],['Resolution %',null]],
+    buckets:[
+      {name:'180+', cls:'b4', cases:3, pos:'₹11.41L', res:'0.0%', cr:{FWD:3}},
+      {name:'SMA - 0', cls:'b0', cases:18, pos:'₹39.96L', res:'83.3%', cr:{Stable:15,FWD:3}},
+      {name:'SMA - 1', cls:'b1', cases:9, pos:'₹14.22L', res:'88.9%', cr:{Stable:7,RB:1,FWD:1}},
+      {name:'SMA - 2', cls:'b2', cases:4, pos:'₹6.26L', res:'50.0%', cr:{Stable:2,FWD:2}},
+    ],
+    total:{name:'Total', cases:34, pos:'₹71.85L', res:'73.5%', cr:{Stable:24,RB:1,FWD:9}},
+    tblHead:[['Loan A/C No',null],['Customer ID',null],['Bucket','edl.col.bucket'],['DPD','edl.col.dpd'],['POS','edl.col.pos'],['Overdue','edl.col.overdue'],['Outcome','edl.col.outcome'],['Product','edl.col.product']],
+    rows:[
+      ['006037051000017','380000775453','SMA - 0','1','₹9.63L','₹0.28L','stable','edl_migrated_greater_than_5_lacs'],
+      ['009437051000017','380000394907','180+','213','₹9.07L','₹7.04L','fwd','edl_migrated_greater_than_5_lacs'],
+      ['006039691000114','230000021794','SMA - 0','1','₹4.61L','₹0.15L','stable','edl_inventory'],
+      ['006036061000741','180000707493','SMA - 0','1','₹3.70L','₹0.06L','fwd','edl_migrated'],
+      ['006039691000109','231000073537','SMA - 0','1','₹3.14L','₹0.14L','stable','edl_inventory'],
+      ['006039691000126','380003808480','SMA - 1','32','₹2.71L','₹0.11L','stable','edl_inventory'],
+      ['006039691000035','380000459773','SMA - 2','62','₹2.45L','₹0.27L','fwd','edl_inventory'],
+    ],
+  },
+};
+
+let activeProduct='borrow';
+
+function renderCombinedTiles(){
+  const c = [
+    {k:'cmb.cases', l:'Total Cases (all products)', v:'953'},
+    {k:'cmb.value', l:'Total Value at Risk', v:'₹2.79 Cr'},
+    {k:'cmb.res', l:'Blended Resolution %', v:'42.7%'},
+    {k:'cmb.waiver', l:'Waiver % of Collectable Penal', v:'1.27%'},
+  ];
+  document.getElementById('combinedTiles').innerHTML = c.map(t=>`
+    <div class="tile combined">
+      <div class="tl">${t.l} ${ib(t.k)}</div>
+      <div class="tv">${t.v}</div>
+    </div>`).join('');
+}
+
+function renderPTabs(){
+  const order=['borrow','cc','edi','edl'];
+  document.getElementById('ptabs').innerHTML = order.map(k=>{
+    const p=PRODUCTS[k];
+    return `<div class="ptab ${k===activeProduct?'active':''}" onclick="switchProduct('${k}')">
+      <span class="pdot" style="background:${p.color}"></span>${p.label}
+      <span class="pc">${p.tiles[0].v}</span>
+    </div>`;
+  }).join('');
+}
+
+function switchProduct(k){ activeProduct=k; renderPTabs(); renderProductPanel(); window.scrollTo({top:document.getElementById('ptabs').offsetTop-80, behavior:'smooth'}); }
+
+function flowChipCls(v){
+  const s=(v||'').toString().toLowerCase();
+  if(s==='fwd') return 'fwd';
+  if(s==='res'||s==='resolved'||s==='paid') return s==='paid'?'paid':'res';
+  if(s==='mindue') return 'mindue';
+  if(s==='stbl'||s==='stable') return 'stable';
+  if(s==='rb'||s==='norm') return 'rb';
+  if(s==='unpaid') return 'unpaid';
+  if(s==='partial') return 'partial';
+  return '';
+}
+
+function renderProductPanel(){
+  const p = PRODUCTS[activeProduct];
+  const tilesHtml = p.tiles.map(t=>`
+    <div class="tile">
+      <div class="tl">${t.l} ${ib(t.k)}</div>
+      <div class="tv">${t.v}</div>
+    </div>`).join('');
+
+  const bucketRows = p.buckets.map((b,i)=>`
+    <tr>
+      <td><span class="bktcell ${b.cls}">${b.name} ${ib('crpop:'+i)}</span></td>
+      <td class="r">${b.cases.toLocaleString('en-IN')}</td>
+      <td class="r">${b.pos}</td>
+      <td class="r">${b.res}</td>
+    </tr>`).join('');
+  const totalRow = `<tr class="total">
+      <td><span class="bktcell">${p.total.name} ${ib('crpop:total')}</span></td>
+      <td class="r">${p.total.cases.toLocaleString('en-IN')}</td>
+      <td class="r">${p.total.pos}</td>
+      <td class="r">${p.total.res}</td>
+    </tr>`;
+
+  const bucketHeadHtml = p.bucketHead.map(([label,key])=>`<th${label==='Cases'||label.includes('%')||label==='POS'?' class="r"':''}>${label}${key?ib(key):''}</th>`).join('');
+  const tblHeadHtml = p.tblHead.map(([label,key])=>`<th>${label}${key?ib(key):''}</th>`).join('');
+  const tblRowsHtml = p.rows.map(r=>{
+    const cells = r.map((cell,i)=>{
+      const isFlow = ['fwd','stbl','norm','rb','res','resolved','paid','mindue','unpaid','partial','stable'].includes((cell||'').toString().toLowerCase());
+      if(isFlow) return `<td><span class="flowchip ${flowChipCls(cell)}">${cell.toUpperCase()}</span></td>`;
+      if(i===0) return `<td class="mono">${cell}</td>`;
+      return `<td>${cell}</td>`;
+    }).join('');
+    return `<tr>${cells}</tr>`;
+  }).join('');
+
+  document.getElementById('productPanels').innerHTML = `
+    <div class="panel" style="border-color:${p.color}22">
+      <div class="ptitle" style="justify-content:space-between">
+        <span>${p.label} Portfolio</span>
+        <span style="font-size:11.5px;color:var(--muted);font-weight:600">agent: ${p.agent}</span>
+      </div>
+      <div class="tiles" style="margin-bottom:0">${tilesHtml}</div>
+    </div>
+
+    <div class="panel">
+      <div class="ptitle">Metrics by ${p.bucketHead[0][0]}</div>
+      <table class="tbl" id="bktTable">
+        <thead><tr>${bucketHeadHtml}</tr></thead>
+        <tbody>${bucketRows}${totalRow}</tbody>
+      </table>
+      <div class="pop hidden" id="crPop">
+        <button class="pop-x" onclick="closePop()">&times;</button>
+        <div class="pop-h" id="crPopH">Case Resolution</div>
+        <div class="pop-s">Breakdown for this ${p.bucketHead[0][0].toLowerCase()}</div>
+        <div id="crPopBody"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ptitle">Case List (sample)</div>
+      <table class="tbl">
+        <thead><tr>${tblHeadHtml}</tr></thead>
+        <tbody>${tblRowsHtml}</tbody>
+      </table>
+    </div>`;
+}
+
+function showPop(e,key){
+  e.stopPropagation();
+  document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
+  e.target.classList.add('on');
+  const p = PRODUCTS[activeProduct];
+  const src = key==='total' ? p.total : p.buckets[key];
+  document.getElementById('crPopH').textContent='Case Resolution · '+src.name;
+  document.getElementById('crPopBody').innerHTML=Object.entries(src.cr)
+    .map(([k,v])=>`<div class="pr"><span>${k}</span><span class="n">${v.toLocaleString('en-IN')}</span></div>`).join('');
+  const pop=document.getElementById('crPop'); pop.classList.remove('hidden');
+  const panel=e.target.closest('.panel').getBoundingClientRect();
+  const r=e.target.getBoundingClientRect();
+  pop.style.left=Math.min(r.left-panel.left+24, panel.width-310)+'px';
+  pop.style.top=(r.top-panel.top+24)+'px';
+}
+function closePop(){const p=document.getElementById('crPop');if(p)p.classList.add('hidden');}
+
+/* intercept the crpop:N info buttons before the generic showInfo handler */
+const _origIb = ib;
+window.showInfo = function(e){
+  const k = e.target.dataset.k;
+  if(k && k.startsWith('crpop:')){
+    e.stopPropagation();
+    const key = k.slice(6);
+    showPop(e, key==='total'?'total':Number(key));
+    return;
+  }
+  _showInfoReal(e);
+};
+function _showInfoReal(e){
+  document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
+  e.target.classList.add('on');
+  const d = INFO[e.target.dataset.k];
+  if(!d) return;
+  const r = e.target.getBoundingClientRect();
+  let left = Math.min(r.left, window.innerWidth-316);
+  let top = r.bottom+8;
+  if(top+180 > window.innerHeight) top = Math.max(8, r.top-8-190);
+  document.getElementById('itipMount').innerHTML = `
+    <div class="itip" style="left:${left}px;top:${top}px">
+      <span class="it-x" onclick="closeInfo()">&times;</span>
+      <div class="it-k">${d.t}</div>
+      <div class="it-f">${d.f.replace(/\n/g,'<br>')}</div>
+      ${d.n?`<div class="it-n">${d.n}</div>`:''}
+    </div>`;
+}
+
+// ===== render repayments =====
 const REPAYMENTS = {
   paid:[
     {d:'21st Jun 2026, 2:34 pm',a:'₹20,769.95',id:'9c2adc63-64cc-4115-b976-c1b1614554af'},
@@ -455,38 +809,6 @@ const REPAYMENTS = {
 const WAIVERS = [
   {uuid:'0b5a5101-288e-42de-8637-07ca746e75e1',created:'1st Jul 2026, 9:58 am',by:'srishivasaisol…',lp:'100%',li:'100%',repay:'₹16,212.70',waiver:'₹503.19',reason:'Financial',status:'SUBMITTED'}
 ];
-
-// ===== render home =====
-function renderBuckets(){
-  const tb=document.querySelector('#bktTable tbody'); tb.innerHTML='';
-  BUCKETS.forEach((b,i)=>{
-    tb.innerHTML+=`<tr>
-      <td><span class="bktcell ${b.cls}">${b.k} <span class="info" onclick="showPop(event,${i})">i</span></span></td>
-      <td class="r">${b.cases.toLocaleString('en-IN')}</td><td class="r">${b.pos}</td>
-      <td class="r">${b.daily}</td><td class="r">${b.mtd}</td></tr>`;
-  });
-  tb.innerHTML+=`<tr class="total">
-    <td><span class="bktcell">Total <span class="info" onclick="showPop(event,-1)">i</span></span></td>
-    <td class="r">${TOTAL.cases}</td><td class="r">${TOTAL.pos}</td>
-    <td class="r">${TOTAL.daily}</td><td class="r">${TOTAL.mtd}</td></tr>`;
-}
-function showPop(e,i){
-  e.stopPropagation();
-  document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
-  e.target.classList.add('on');
-  const src = i<0?TOTAL:BUCKETS[i];
-  document.getElementById('crPopH').textContent='Case Resolution · '+src.k;
-  document.getElementById('crPopBody').innerHTML=Object.entries(src.cr)
-    .map(([k,v])=>`<div class="pr"><span>${k}</span><span class="n">${v.toLocaleString('en-IN')}</span></div>`).join('');
-  const pop=document.getElementById('crPop'); pop.classList.remove('hidden');
-  const panel=e.target.closest('.panel').getBoundingClientRect();
-  const r=e.target.getBoundingClientRect();
-  pop.style.left=Math.min(r.left-panel.left+24, panel.width-310)+'px';
-  pop.style.top=(r.top-panel.top+24)+'px';
-}
-function closePop(){document.getElementById('crPop').classList.add('hidden');document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));}
-
-// ===== render repayments =====
 function renderRep(kind){
   const rows=REPAYMENTS[kind]; const tb=document.querySelector('#repTable tbody');
   document.getElementById('repTitle').textContent='Payments - '+kind.charAt(0).toUpperCase()+kind.slice(1);
@@ -506,7 +828,6 @@ function renderAppr(){
     <td class="r" style="white-space:nowrap"><button class="btn approve sm" onclick="decide(${i},'APPROVED')">Approve</button>
     <button class="btn reject sm" onclick="decide(${i},'REJECTED')">Reject</button></td></tr>`).join('');
 }
-// approve/reject → nudge for feedback before finalizing
 function decide(i,verdict){
   const acc = verdict==='APPROVED';
   document.getElementById('modalMount').innerHTML=`
@@ -582,7 +903,7 @@ function go(v){
   document.getElementById('nav-home').classList.toggle('active',v==='home');
   document.getElementById('nav-appr').classList.toggle('active',v==='approvals');
   if(v==='approvals') renderAppr();
-  closeMenu(); window.scrollTo(0,0);
+  closeMenu(); closeInfo(); window.scrollTo(0,0);
 }
 function doSearch(e){e.preventDefault();openProfile();}
 function openProfile(){go('home');document.getElementById('view-home').classList.add('hidden');document.getElementById('view-profile').classList.remove('hidden');profTab('overview');window.scrollTo(0,0);}
@@ -601,7 +922,6 @@ function closeMenu(){const m=document.getElementById('raMenu');if(m)m.classList.
 function payAction(kind){closeMenu();toast('Payment initiated — '+kind);}
 
 // ===== modals =====
-// Upload Feedback = bulk upload via fileops
 function openFeedback(){
   document.getElementById('modalMount').innerHTML=`
   <div class="overlay" onclick="if(event.target===this)closeModal()">
@@ -631,8 +951,6 @@ function submitFeedbackFile(){
   if(!f){toast('Choose a CSV file');return;}
   closeModal();toast('Uploaded '+f.name+' via FileOps');
 }
-
-// Agent's Notepad — single note entry
 function openNotepad(){
   document.getElementById('modalMount').innerHTML=`
   <div class="overlay" onclick="if(event.target===this)closeModal()">
@@ -715,13 +1033,14 @@ function closeModal(){document.getElementById('modalMount').innerHTML='';}
 // ===== portfolio download =====
 function downloadPortfolio(){
   const rows=[['UUID','Customer','Product','Bucket','POS','Due Date','Assigned Agent']];
-  rows.push(['0b5a5101-288e-42de-8637-07ca746e75e1','Kaustubh Shirsath','CREDIT_CARD','BKT0','20769.95','2026-07-05','agent.rk']);
-  rows.push(['a41c22de-11ff-4a02-9c31-77b0','Rahul Verma','CREDIT_CARD','BKT2','48210.00','2026-07-02','agent.sn']);
-  rows.push(['c93f18bb-71a1-4de0-88aa-4c2d','Priya Nair','CREDIT_CARD','BKT1','12980.50','2026-07-08','agent.rk']);
+  rows.push(['1aa8a820-8bcd-11ec-b470-b392213adebc','—','BORROW','Bkt 6','190000','2026-08-05','sudhansu.sahu.cw']);
+  rows.push(['ae59b276-af7d-48f8-b8a8-43828454b3f3','—','CREDIT_CARD','Bkt 0','274000','2026-08-05','anurag.s.cw']);
+  rows.push(['905f960e-e9de-4b2a-9dca-11c91565e299','—','EDI','DPD 15 to 30','110000','2026-08-05','praveen.jadhav.cw']);
+  rows.push(['006037051000017','—','EDL','SMA - 0','963000','2026-08-05','mukul.moral']);
   const csv=rows.map(r=>r.join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='agent_portfolio_CC.csv';a.click();URL.revokeObjectURL(url);
-  toast('Agent portfolio downloaded (agency level)');
+  const a=document.createElement('a');a.href=url;a.download='agent_portfolio_combined.csv';a.click();URL.revokeObjectURL(url);
+  toast('Agent portfolio downloaded (all products)');
 }
 
 // ===== toast =====
@@ -731,9 +1050,12 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 // global click closers
 document.addEventListener('click',()=>{closeMenu();});
 document.addEventListener('click',(e)=>{if(!e.target.closest('#crPop')&&!e.target.classList.contains('info'))closePop();});
+document.addEventListener('click',(e)=>{if(!e.target.closest('.itip')&&!e.target.classList.contains('info'))closeInfo();});
 
 // init
-renderBuckets();
+renderCombinedTiles();
+renderPTabs();
+renderProductPanel();
 </script>
 </body>
 </html>
