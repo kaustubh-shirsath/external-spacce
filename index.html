@@ -245,10 +245,7 @@ a{color:var(--brand);text-decoration:none}
 <div class="page" id="view-home">
 
   <div class="h1">My Portfolio — Collection</div>
-  <div class="sub">Kaustubh Shirsath · combined book across Borrow, Credit Card, EDI &amp; EDL</div>
-
-  <!-- ===== combined strip across all 4 products ===== -->
-  <div class="tileswrap"><div class="tiles" id="combinedTiles"></div></div>
+  <div class="sub">Kaustubh Shirsath · Borrow, Credit Card, EDI &amp; EDL — metrics shown per product, not summed</div>
 
   <!-- ===== tabs: Summary (product + product×bucket) | Borrow | Credit Card | EDI | EDL (case list only) ===== -->
   <div class="ptabs" id="ptabs"></div>
@@ -488,17 +485,11 @@ a{color:var(--brand);text-decoration:none}
    cops-svc source + EMR table schemas — see collections_agent knowledge base).
    ========================================================================= */
 const INFO = {
-  // ---- combined strip ----
-  'cmb.cases': {t:'Total Cases (all products)', f:'COUNT(*) across allocation_tele_calling / allocation_field\nWHERE agent_email = :agent AND product IN (BORROW,CC,EDI,EDL)\nAND status NOT IN (onHold) AND outcome NOT IN (reassigned, carryForward)', n:'GET /allocations/agents/portfolio today returns Borrow only — needs a `product` filter added to FilterQueryDTO to union all 4.'},
-  'cmb.value': {t:'Total Value at Risk', f:'Borrow: SUM(pos)\n+ CC: SUM(remaining_bill_amount)/100\n+ EDI: SUM(pos)\n+ EDL: SUM(principal_outstanding)\n(₹, summed across the 4 source MIS tables)', n:'Not one field — each product\'s "amount at risk" means something different (POS vs total bill vs outstanding). Summed here for one headline number only.'},
-  'cmb.res': {t:'Blended Resolution %', f:'Σ resolved_cases ÷ Σ total_cases\nresolved defined per product:\n Borrow: current_flow <> \'FWD\'\n CC: bill status IN (MINDUE_PAID,PAID)\n EDI: current_flow IN (Resolved,STBL,RB)\n EDL: outcome <> \'FWD\'', n:'"Resolved" isn\'t the same concept per product — this is a weighted rollup for a single glance, not a real single metric anywhere in the backend today.'},
-  'cmb.waiver': {t:'Waiver % of Collectable Penal', f:'Numerator: SUM(copsdb_gold.waiver_data.total_wiver)\n  WHERE waiver_requested_by = :agent_email\nDenominator: SUM(late_penalty_payable + late_interest_payable)\n  FROM lmsdb_gold.lmsdata_loan_snapshot_entity\n  JOIN on this agent\'s allocated uuids (micro units ÷1e6)', n:'Borrow-only right now: 10 waivers · ₹0.25L waived ÷ ₹19.63L collectable = 1.27%. CC waivers go through the separate cc-waiver/TaskOps module, not this table — would need a UNION once CC waiver-requester attribution is added.'},
-
   // ---- Borrow tiles ----
   'bor.cases': {t:'Total Cases', f:"COUNT(*) FROM manual_production_tables.current_month_collections_mis\nWHERE tc_email_id = :agent AND mis_date = (latest)", n:'Live today via GET /agent-portfolio/agent-summary (ComputedSummaryDTO.totalCases) — already product-agnostic.'},
   'bor.pos': {t:'Total POS', f:'SUM(pos) — same filter as above.\npos = principal outstanding, already in ₹ (no unit conversion).', n:'Backs ComputedSummaryDTO.totalPOS.'},
-  'bor.res': {t:'Cycle Resolution %', f:"COUNT(current_flow <> 'FWD') ÷ COUNT(*)\ncurrent_flow ∈ {FWD, NORM, STBL, RB} — cumulative since cycle start (6th→5th).", n:'Filter on current_bucket, never source_bucket (source_bucket undercounts ~2×) — per analyst KB.'},
-  'bor.fwd': {t:'Forward Rate', f:"COUNT(current_flow = 'FWD') ÷ COUNT(*)\n— cases that have NOT paid and are rolling to a worse bucket this cycle.", n:'Inverse of resolution; flags how much of this book is actively deteriorating vs stuck.'},
+  'bor.res': {t:'Resolution Rate (Flows)', f:"COUNT(current_flow <> 'FWD') ÷ COUNT(*)\ncurrent_flow ∈ {FWD, NORM, STBL, RB} — cumulative since cycle start (6th→5th).", n:'Filter on current_bucket, never source_bucket (source_bucket undercounts ~2×) — per analyst KB.'},
+  'bor.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE user_type=\'SLICE\' AND uuid IN (agent\'s book)\nDenominator: SUM(pos) for the agent\'s whole book', n:'Real, queried this session: 9 of 480 uuids have a settlement record · ₹1.3L recovered ÷ ₹63.37L POS = 2.05%.'},
   'bor.col.bucket': {t:'Bucket', f:'current_bucket — Bkt 0 … Bkt 6+ (ALLOCATION_BUCKET enum in cops-svc). Month-DPD semantics: Bkt0 = DPD≤30, +30 days per step.'},
   'bor.col.dpd': {t:'DPD', f:'dpd column — days past due as of mis_date.'},
   'bor.col.pos': {t:'POS', f:'pos — principal outstanding, ₹ (no unit conversion needed).'},
@@ -519,9 +510,9 @@ const INFO = {
 
   // ---- CC tiles ----
   'cc.cases': {t:'Total Cases', f:'COUNT(DISTINCT uuid) FROM manual_production_tables.current_month_collections_mis_cc\nWHERE tc_email_id = :agent AND mis_Date = (latest)', n:'CC MIS is bill-level — always COUNT(DISTINCT uuid) for user counts, never COUNT(*).'},
-  'cc.bill': {t:'Total Remaining Bill', f:'SUM(remaining_bill_amount) / 100\n— stored in paise, ÷100 for ₹. Includes principal + interest + charges + GST.', n:'This is the "full payoff" number — distinct from Min Due below.'},
-  'cc.mindue': {t:'Min-Due Resolution %', f:"COUNT(status IN ('MINDUE_PAID','PAID')) ÷ COUNT(*)\nstatus reclassified from bill_payment_status per the PARTIAL_PAID→MINDUE_PAID rule (bill_amount − min_due_amount ≥ remaining_bill_amount).", n:"CC's real intermediate state — MINDUE_RESOLVED is already a first-class allocation outcome in cops-svc (AgentSummaryComputationServiceV2), Borrow has no equivalent."},
-  'cc.full': {t:'Full Resolution %', f:"COUNT(status = 'PAID') ÷ COUNT(*)\n— fully cleared bills only, stricter than min-due resolution above."},
+  'cc.bill': {t:'Total POS', f:'SUM(remaining_bill_amount) / 100\n— stored in paise, ÷100 for ₹. Includes principal + interest + charges + GST.', n:'CC has no separate "principal-only POS" tile — remaining_bill_amount is the closest analogue to Borrow/EDI/EDL\'s POS, since it\'s the full payoff figure for this revolving product.'},
+  'cc.res': {t:'Resolution Rate (Flows)', f:"COUNT(status IN ('MINDUE_PAID','PAID')) ÷ COUNT(*)\nstatus reclassified from bill_payment_status per the PARTIAL_PAID→MINDUE_PAID rule (bill_amount − min_due_amount ≥ remaining_bill_amount).", n:"CC's flow-equivalent is bill status — MINDUE_RESOLVED is a first-class allocation outcome in cops-svc (AgentSummaryComputationServiceV2), Borrow has no equivalent."},
+  'cc.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE uuid IN (agent\'s book)\nDenominator: SUM(remaining_bill_amount)/100 for the agent\'s whole book', n:'Real, queried this session: 0 of 373 uuids have any settlement_users row (only user_type=SLICE/BANK exist in that table). CC settlement/NPA workflow is not built yet — 0.0% reflects a genuine product gap, not a query miss.'},
   'cc.col.bucket': {t:'Bucket', f:'current_bucket — same Bkt0…6+ convention as Borrow (CC bills cycle monthly too, unlike EDI).'},
   'cc.col.dpd': {t:'DPD', f:'dpd — days past due on the bill.'},
   'cc.col.bill': {t:'Remaining Bill', f:'remaining_bill_amount / 100 (paise→₹). Total payoff figure.'},
@@ -531,9 +522,9 @@ const INFO = {
 
   // ---- EDI tiles ----
   'edi.cases': {t:'Total Cases', f:'COUNT(*) FROM s3_tool_propagator.collections_edi_mis_test\nWHERE tc_email = :agent AND mis_date = (latest)', n:'EDI = merchant daily-instalment product — table is genuinely different from the Borrow/CC MIS, not just a filter.'},
-  'edi.pos': {t:'Total Outstanding', f:'SUM(pos) — EDI has no separate "bill" concept like CC; pos is the whole outstanding.'},
-  'edi.res': {t:'Resolution %', f:"COUNT(current_flow IN ('Resolved','STBL','RB')) ÷ COUNT(*)\n— literal cumulative-since-day-1, no monthly cycle anchor exists for this product."},
-  'edi.dpd': {t:'Avg DPD', f:'AVG(dpd) — raw day count, not a bucket. EDI DPD accrues from day 1 of missed daily instalment, so "days" is the real urgency signal here, not a month-bucket label.'},
+  'edi.pos': {t:'Total POS', f:'SUM(pos) — EDI has no separate "bill" concept like CC; pos is the whole outstanding.'},
+  'edi.res': {t:'Resolution Rate (Flows)', f:"COUNT(current_flow IN ('Resolved','STBL','RB')) ÷ COUNT(*)\n— literal cumulative-since-day-1, no monthly cycle anchor exists for this product."},
+  'edi.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE user_type=\'BANK\' AND uuid IN (agent\'s book)\nDenominator: SUM(pos) for the agent\'s whole book', n:'Real, queried this session: 0 of 66 uuids have a settlement record — this book is DPD 1-30, too early-stage for settlement to have kicked in (settlement typically starts 91+ DPD).'},
   'edi.col.band': {t:'DPD Band', f:'morning_bucket — free-text day-range label ("DPD 1 to 2", "DPD 7 to 14", "DPD 30+"), computed upstream in the daily EDI MIS job. NOT the same enum as Borrow\'s ALLOCATION_BUCKET — forcing EDI into Bkt0-6+ would misrepresent urgency (a Bkt0-equivalent EDI case can be DPD 25 already).'},
   'edi.col.dpd': {t:'DPD (days)', f:'dpd — exact day count, the primary sort key for this product.'},
   'edi.col.sub': {t:'Sub-Category', f:'sub_category — merchant industry (RETAIL / MANUFACTURING / SERVICES…). Changes the collections conversation script.'},
@@ -545,8 +536,8 @@ const INFO = {
   // ---- EDL tiles ----
   'edl.cases': {t:'Total Cases', f:"COUNT(*) FROM s3_tool_propagator.bank_collections_mis\nWHERE agent_id = :agent AND loan_account_status='Active' AND bucket <> 'Standard'\nAND product_name IN (edl_inventory, edl_migrated, edl_property, micro_edl)", n:'EDL sits inside the same bank_collections_mis table as all other CBS/merchant products — scoped here purely by product_name.'},
   'edl.pos': {t:'Total POS', f:'SUM(principal_outstanding) — ₹, no unit conversion.'},
-  'edl.res': {t:'Resolution %', f:"COUNT(outcome <> 'FWD') ÷ COUNT(*)\noutcome ∈ {Norm, RB, Stable, FWD} — Bank-native outcome column, same as EDL/Bank loans generally."},
-  'edl.overdue': {t:'Total Overdue', f:'SUM(total_overdue) — ₹, overdue amount incl. late interest/penalty.'},
+  'edl.res': {t:'Resolution Rate (Flows)', f:"COUNT(outcome <> 'FWD') ÷ COUNT(*)\noutcome ∈ {Norm, RB, Stable, FWD} — Bank-native outcome column, same as EDL/Bank loans generally."},
+  'edl.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE user_type=\'BANK\' AND account_number IN (agent\'s book, joined via loan_account_no)\nDenominator: SUM(principal_outstanding) for the agent\'s whole book', n:'Real, queried this session: 0 of 34 loans have a settlement record this cycle — small book (n=34), plausible to have zero even with a 180+ case present.'},
   'edl.col.bucket': {t:'Bucket', f:"bucket — Bank-native SMA/SS convention: 'SMA - 0' / 'SMA - 1' / 'SMA - 2' / 'SS - 1..3' / '180+'. A THIRD distinct bucket vocabulary from Borrow's Bkt0-6+ and EDI's DPD-day bands — do not normalize these into one label set in the UI."},
   'edl.col.dpd': {t:'DPD', f:'dpd column.'},
   'edl.col.pos': {t:'POS', f:'principal_outstanding, ₹.'},
@@ -571,8 +562,8 @@ const PRODUCTS = {
     tiles:[
       {k:'bor.cases', l:'Total Cases', v:'480'},
       {k:'bor.pos', l:'Total POS', v:'₹63.37L'},
-      {k:'bor.res', l:'Cycle Resolution %', v:'9.4%'},
-      {k:'bor.fwd', l:'Forward Rate', v:'90.6%'},
+      {k:'bor.res', l:'Resolution Rate (Flows)', v:'9.4%'},
+      {k:'bor.npa', l:'Rate of Recovery (NPA/Settlement)', v:'2.05%'},
     ],
     bucketHead:[['Bucket','bor.col.bucket'],['Cases',null],['POS','bor.col.pos'],['Resolution %',null]],
     buckets:[
@@ -595,9 +586,9 @@ const PRODUCTS = {
     label:'Credit Card', color:'#0A7C4E', agent:'anurag.s.cw@slicebank.com',
     tiles:[
       {k:'cc.cases', l:'Total Cases', v:'373'},
-      {k:'cc.bill', l:'Total Remaining Bill', v:'₹59.91L'},
-      {k:'cc.mindue', l:'Min-Due Resolution %', v:'81.8%'},
-      {k:'cc.full', l:'Full Resolution %', v:'18.8%'},
+      {k:'cc.bill', l:'Total POS', v:'₹59.91L'},
+      {k:'cc.res', l:'Resolution Rate (Flows)', v:'81.8%'},
+      {k:'cc.npa', l:'Rate of Recovery (NPA/Settlement)', v:'0.0%'},
     ],
     bucketHead:[['Bucket','bor.col.bucket'],['Cases',null],['Remaining Bill','cc.col.bill'],['Min-Due Res %',null]],
     buckets:[
@@ -622,9 +613,9 @@ const PRODUCTS = {
     label:'EDI', color:'#EB6834', agent:'praveen.jadhav.cw@slicebank.com',
     tiles:[
       {k:'edi.cases', l:'Total Cases', v:'66'},
-      {k:'edi.pos', l:'Total Outstanding', v:'₹83.91L'},
-      {k:'edi.res', l:'Resolution %', v:'48.5%'},
-      {k:'edi.dpd', l:'Avg DPD', v:'~13 days'},
+      {k:'edi.pos', l:'Total POS', v:'₹83.91L'},
+      {k:'edi.res', l:'Resolution Rate (Flows)', v:'48.5%'},
+      {k:'edi.npa', l:'Rate of Recovery (NPA/Settlement)', v:'0.0%'},
     ],
     bucketHead:[['DPD Band','edi.col.band'],['Cases',null],['POS','edi.col.pos'],['Resolution %',null]],
     buckets:[
@@ -651,8 +642,8 @@ const PRODUCTS = {
     tiles:[
       {k:'edl.cases', l:'Total Cases', v:'34'},
       {k:'edl.pos', l:'Total POS', v:'₹71.85L'},
-      {k:'edl.res', l:'Resolution %', v:'73.5%'},
-      {k:'edl.overdue', l:'Total Overdue', v:'₹13.30L'},
+      {k:'edl.res', l:'Resolution Rate (Flows)', v:'73.5%'},
+      {k:'edl.npa', l:'Rate of Recovery (NPA/Settlement)', v:'0.0%'},
     ],
     bucketHead:[['Bucket','edl.col.bucket'],['Cases',null],['POS','edl.col.pos'],['Resolution %',null]],
     buckets:[
@@ -677,20 +668,6 @@ const PRODUCTS = {
 
 let activeTab='summary';
 const PRODUCT_ORDER=['borrow','cc','edi','edl'];
-
-function renderCombinedTiles(){
-  const c = [
-    {k:'cmb.cases', l:'Total Cases (all products)', v:'953'},
-    {k:'cmb.value', l:'Total Value at Risk', v:'₹2.79 Cr'},
-    {k:'cmb.res', l:'Blended Resolution %', v:'42.7%'},
-    {k:'cmb.waiver', l:'Waiver % of Collectable Penal', v:'1.27%'},
-  ];
-  document.getElementById('combinedTiles').innerHTML = c.map(t=>`
-    <div class="tile">
-      <div class="tl">${t.l} ${ib(t.k)}</div>
-      <div class="tv">${t.v}</div>
-    </div>`).join('');
-}
 
 function renderPTabs(){
   const tabs = [{key:'summary',label:'Summary'}, ...PRODUCT_ORDER.map(k=>({key:k,label:PRODUCTS[k].label}))];
@@ -1120,7 +1097,6 @@ document.addEventListener('click',(e)=>{if(!e.target.closest('#crPop')&&!e.targe
 document.addEventListener('click',(e)=>{if(!e.target.closest('.itip')&&!e.target.classList.contains('info'))closeInfo();});
 
 // init
-renderCombinedTiles();
 renderPTabs();
 renderMain();
 </script>
