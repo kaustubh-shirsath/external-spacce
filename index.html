@@ -491,7 +491,7 @@ a{color:var(--brand);text-decoration:none}
       </div>
       <div class="msub" style="margin-bottom:12px">ODR vendor notices · bulk-uploaded by Legal as <code style="background:#F4F5FB;padding:1px 5px;border-radius:4px">uuid_noticename.pdf</code> · POS ≥ ₹50k cases only</div>
       <table class="tbl">
-        <thead><tr><th style="width:36px">#</th><th>Notice</th><th>Filed By</th><th>Received On</th><th>File</th><th class="r">Actions</th></tr></thead>
+        <thead><tr><th>Notice</th><th>Date</th><th class="r">Actions</th></tr></thead>
         <tbody id="arbBody"></tbody>
       </table>
     </div>
@@ -508,13 +508,12 @@ a{color:var(--brand);text-decoration:none}
         <div class="kv"><div class="k">Filed On</div><div class="v">14th Aug 2026</div></div>
         <div class="kv"><div class="k">Next Hearing</div><div class="v">9th Oct 2026</div></div>
         <div class="kv"><div class="k">Stage</div><div class="v"><span class="badge submitted">SUMMONS ISSUED</span></div></div>
-        <div class="kv"><div class="k">Warrant</div><div class="v"><span class="lz expired">BAILABLE WARRANT</span></div></div>
       </div>
       <table class="tbl">
         <thead><tr><th>Document</th><th>Uploaded On</th><th>File</th><th class="r">Actions</th></tr></thead>
         <tbody>
           <tr><td>Court Summons</td><td>2nd Sep 2026</td><td>0b5a5101_court_summons.pdf</td>
-            <td class="r"><button class="btn ghost sm" onclick="viewDoc('Court Summons','Sec 138 NI Act · NI/2026/104728 · JMFC Court 3, Kolkata','0b5a5101_court_summons.pdf')">View</button> <button class="btn ghost sm" onclick="toast('Downloading 0b5a5101_court_summons.pdf')">Download</button></td></tr>
+            <td class="r"><button class="btn ghost sm" onclick="viewDoc('Court Summons','Sec 138 NI Act · NI/2026/104728 · JMFC Court 3, Kolkata','0b5a5101_court_summons.pdf','docs/summons.png')">View</button> <button class="btn ghost sm" onclick="dlDoc('docs/summons.png','0b5a5101_court_summons.png')">Download</button></td></tr>
           <tr><td>Bailable Warrant</td><td>12th Sep 2026</td><td>0b5a5101_bailable_warrant.pdf</td>
             <td class="r"><button class="btn ghost sm" onclick="viewDoc('Bailable Warrant','Issued 11-Sep-2026 hearing · non-appearance','0b5a5101_bailable_warrant.pdf')">View</button> <button class="btn ghost sm" onclick="toast('Downloading 0b5a5101_bailable_warrant.pdf')">Download</button></td></tr>
         </tbody>
@@ -1180,21 +1179,24 @@ function downloadPortfolio(){
 
 // ===== legal tab =====
 const ARB_NOTICES=[
-  {n:1,name:'Sec 21 Notice — Invocation of Arbitration',by:'slice (via ODR vendor)',on:'18th Apr 2026',file:'0b5a5101_sec21_notice.pdf'},
-  {n:2,name:'Pre-Arbitration Notice',by:'ODR vendor',on:'22nd Apr 2026',file:'0b5a5101_pre_arbitration_notice.pdf'},
-  {n:3,name:'Arbitrator Appointment / Nomination Notice',by:'ODR vendor',on:'2nd May 2026',file:'0b5a5101_arbitrator_appointment_notice.pdf'},
-  {n:4,name:'Statement of Claim',by:'slice',on:'19th May 2026',file:'0b5a5101_statement_of_claim.pdf'},
-  {n:5,name:'Statement of Defense',by:'Customer',on:null,file:null,note:'Not filed — awaited'},
-  {n:6,name:'Interim Order — Sec 17 (bank account freeze)',by:'Arbitrator',on:'28th Jul 2026',file:'0b5a5101_interim_order.pdf'},
-  {n:7,name:'Award',by:'Arbitrator',on:null,file:null,note:'Pending'},
+  {name:'Sec 21 Notice — Invocation of Arbitration',on:'18th Apr 2026',img:null,f:'0b5a5101_sec21_notice.pdf'},
+  {name:'Pre-Arbitration Notice',on:'22nd Apr 2026',img:null,f:'0b5a5101_pre_arbitration_notice.pdf'},
+  {name:'Arbitrator Appointment / Nomination Notice',on:'2nd May 2026',img:null,f:'0b5a5101_arbitrator_appointment_notice.pdf'},
+  {name:'Statement of Claim',on:'19th May 2026',img:'docs/statement_of_claim.png',f:'0b5a5101_statement_of_claim.pdf'},
+  {name:'Statement of Defense',on:null,img:null,f:null,note:'Not filed — awaited'},
+  {name:'Interim Order — Sec 17 (bank account freeze)',on:'28th Jul 2026',img:'docs/interim_order.png',f:'0b5a5101_interim_order.pdf'},
+  {name:'Award',on:null,img:null,f:null,note:'Pending'},
 ];
 function renderArb(){
   const tb=document.getElementById('arbBody'); if(!tb||tb.dataset.done)return; tb.dataset.done=1;
-  tb.innerHTML=ARB_NOTICES.map(a=>`<tr${a.file?'':' style="opacity:.55"'}>
-    <td>${a.n}</td><td>${a.name}</td><td>${a.by}</td>
-    <td>${a.on||'—'}</td><td>${a.file||'<span style="color:var(--muted)">'+(a.note||'—')+'</span>'}</td>
-    <td class="r">${a.file?`<button class="btn ghost sm" onclick="viewDoc('${a.name.replace(/'/g,"\\'")}','Arbitration · PRESOLV360','${a.file}')">View</button> <button class="btn ghost sm" onclick="toast('Downloading ${a.file}')">Download</button>`:'<span style="color:var(--muted);font-size:12.5px">—</span>'}</td></tr>`).join('');
+  tb.innerHTML=ARB_NOTICES.map((a,i)=>`<tr${a.f?'':' style="opacity:.55"'}>
+    <td>${a.name}${a.f?'':' <span style="color:var(--muted);font-size:12px">· '+(a.note||'')+'</span>'}</td>
+    <td>${a.on||'—'}</td>
+    <td class="r">${a.f?`<button class="btn ghost sm" title="View" onclick="arbView(${i})">&#128065;</button> <button class="btn ghost sm" title="Download" onclick="arbDl(${i})">&#8681;</button>`:'<span style="color:var(--muted);font-size:12.5px">—</span>'}</td></tr>`).join('');
 }
+function arbView(i){const a=ARB_NOTICES[i];viewDoc(a.name,'Arbitration · PRESOLV360',a.f,a.img);}
+function arbDl(i){const a=ARB_NOTICES[i];if(a.img){dlDoc(a.img,a.f.replace('.pdf','.png'));}else{toast('Downloading '+a.f);}}
+function dlDoc(href,name){const x=document.createElement('a');x.href=href;x.download=name;document.body.appendChild(x);x.click();x.remove();toast('Downloading '+name);}
 function genNotice(type){
   const tb=document.getElementById('pnBody');
   tb.insertAdjacentHTML('afterbegin',`<tr><td>Sep 21, 2026 2:10 PM</td><td><span class="lz pending">QUEUED</span></td><td>${type}</td><td>No</td><td>Manually triggered from spacce</td><td class="r"><span style="color:var(--muted);font-size:12.5px">—</span></td></tr>`);
@@ -1223,20 +1225,23 @@ function fireSec21(){
     <td class="r"><button class="btn ghost sm" onclick="viewDoc('Sec 21 Notice','Invocation of arbitration · advocate letterhead','0b5a5101_sec21_notice.pdf')">View</button> <button class="btn ghost sm" onclick="toast('Downloading 0b5a5101_sec21_notice.pdf')">Download</button></td></tr>`);
   toast('Risk tag applied · Sec 21 notice triggered');
 }
-function viewDoc(title,sub,file){
-  document.getElementById('modalMount').innerHTML=`
-  <div class="overlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal" style="width:640px">
-      <button class="pop-x" style="position:absolute;top:16px;right:20px;font-size:20px" onclick="closeModal()">&times;</button>
-      <h3>${title}</h3>
-      <div class="msub">${sub} · ${file}</div>
-      <div style="border:1.5px dashed #D9DCEA;border-radius:10px;padding:44px 20px;text-align:center;color:var(--muted);background:#FAFBFF">
+function viewDoc(title,sub,file,img){
+  const body = img
+    ? `<div style="max-height:62vh;overflow:auto;border:1px solid #E3E5EF;border-radius:10px"><img src="${img}" style="width:100%;display:block"></div>`
+    : `<div style="border:1.5px dashed #D9DCEA;border-radius:10px;padding:44px 20px;text-align:center;color:var(--muted);background:#FAFBFF">
         <div style="font-size:34px;margin-bottom:8px">&#128196;</div>
         <div style="font-weight:700;color:var(--ink2)">${file}</div>
         <div style="font-size:12.5px;margin-top:5px">PDF preview · served from COPS S3 via presigned URL</div>
-      </div>
+      </div>`;
+  document.getElementById('modalMount').innerHTML=`
+  <div class="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:720px">
+      <button class="pop-x" style="position:absolute;top:16px;right:20px;font-size:20px" onclick="closeModal()">&times;</button>
+      <h3>${title}</h3>
+      <div class="msub">${sub} · ${file}</div>
+      ${body}
       <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Close</button>
-        <button class="btn primary" onclick="toast('Downloading ${file}')">Download</button></div>
+        <button class="btn primary" onclick="${img?`dlDoc('${img}','${file.replace('.pdf','.png')}')`:`toast('Downloading ${file}')`}">Download</button></div>
     </div></div>`;
 }
 // ===== misc / docket =====
