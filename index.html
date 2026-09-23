@@ -212,7 +212,7 @@ a{color:var(--brand);text-decoration:none}
 
 /* stage track */
 .track{display:flex;align-items:flex-start;margin:4px 0 18px;overflow-x:auto;padding:4px 0}
-.tstep{display:flex;flex-direction:column;align-items:center;flex:1;min-width:86px;position:relative;text-align:center}
+.tstep{cursor:help;display:flex;flex-direction:column;align-items:center;flex:1;min-width:86px;position:relative;text-align:center}
 .tstep:not(:last-child)::after{content:'';position:absolute;top:6px;left:calc(50% + 10px);width:calc(100% - 20px);height:2px;background:#E3B4B4}
 .tstep.done:not(:last-child)::after{background:var(--green)}
 .tdot{width:13px;height:13px;border-radius:50%;background:var(--red);z-index:1}
@@ -499,13 +499,13 @@ a{color:var(--brand);text-decoration:none}
     <div class="panel">
       <div class="ptitle">Arbitration</div>
       <div class="track">
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">LRN Triggered</div><div class="tdate">12th Mar 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Sec 21 Notice</div><div class="tdate" id="td-arb-1">18th Apr 2026</div><button class="btn ghost sm tgen" onclick="genNoticeTrack('SEC_21_NOTICE','td-arb-1')">Generate</button></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Nomination Notice</div><div class="tdate" id="td-arb-2">2nd May 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Statement of Claim</div><div class="tdate" id="td-arb-3">19th May 2026</div></div>
-        <div class="tstep"><div class="tdot"></div><div class="tlabel">Statement of Defense</div><div class="tdate">Awaited</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Sec 17 Interim Order</div><div class="tdate" id="td-arb-5">28th Jul 2026</div></div>
-        <div class="tstep"><div class="tdot"></div><div class="tlabel">Award</div><div class="tdate">Pending</div></div>
+        <div class="tstep done" title="Loan Recall Notice — final demand to repay before legal action begins"><div class="tdot"></div><div class="tlabel">LRN Triggered</div><div class="tdate">12th Mar 2026</div></div>
+        <div class="tstep done" title="Initiation of arbitration — borrower formally informed the dispute is invoked"><div class="tdot"></div><div class="tlabel">Sec 21 Notice</div><div class="tdate" id="td-arb-1">18th Apr 2026</div><button class="btn ghost sm tgen" onclick="genNoticeTrack('SEC_21_NOTICE','td-arb-1')">Generate</button></div>
+        <div class="tstep done" title="Borrower informed who the arbitrator is — neutral appointed via ODR platform"><div class="tdot"></div><div class="tlabel">Nomination Notice</div><div class="tdate" id="td-arb-2">2nd May 2026</div></div>
+        <div class="tstep done" title="slice files its claim — the loan, the default and the amount owed"><div class="tdot"></div><div class="tlabel">Statement of Claim</div><div class="tdate" id="td-arb-3">19th May 2026</div></div>
+        <div class="tstep" title="Borrower's reply to our claim — only ~10% contest"><div class="tdot"></div><div class="tlabel">Statement of Defense</div><div class="tdate">Awaited</div></div>
+        <div class="tstep done" title="Arbitrator's interim order — borrower's bank accounts can be frozen PAN-India"><div class="tdot"></div><div class="tlabel">Sec 17 Interim Order</div><div class="tdate" id="td-arb-5">28th Jul 2026</div></div>
+        <div class="tstep" title="Arbitrator's final decision — enforceable like a court decree"><div class="tdot"></div><div class="tlabel">Award</div><div class="tdate">Pending</div></div>
       </div>
       <table class="tbl">
         <thead><tr><th>Initiated On</th><th>Status</th><th>Type</th><th>Mail Requested</th><th>Comments</th><th class="r">Actions</th></tr></thead>
@@ -529,22 +529,14 @@ a{color:var(--brand);text-decoration:none}
         <span class="chip cc">SI DISHONOUR</span>
       </div>
       <div class="track">
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">LRN Triggered</div><div class="tdate">10th May 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">SI Bounced</div><div class="tdate">16th Jun 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Sec 25 Notice Served</div><div class="tdate" id="td-s25">19th Jun 2026</div><button class="btn ghost sm tgen" onclick="genNoticeTrack('SEC_25_NOTICE','td-s25')">Generate</button></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Case Filed</div><div class="tdate">10th Jul 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Summons Issued</div><div class="tdate">2nd Sep 2026</div></div>
-        <div class="tstep"><div class="tdot"></div><div class="tlabel">Warrant Stage</div><div class="tdate">E/R of warrant</div></div>
-        <div class="tstep"><div class="tdot"></div><div class="tlabel">Disposal</div><div class="tdate">Pending</div></div>
+        <div class="tstep done" title="Loan Recall Notice — final demand to repay before legal action begins"><div class="tdot"></div><div class="tlabel">LRN Triggered</div><div class="tdate">10th May 2026</div></div>
+        <div class="tstep done" title="Repayment SI/NACH dishonoured — the legal basis for Sec 25 action"><div class="tdot"></div><div class="tlabel">SI Bounced</div><div class="tdate">16th Jun 2026</div></div>
+        <div class="tstep done" title="Statutory demand notice — 7 days to pay before a criminal case is filed"><div class="tdot"></div><div class="tlabel">Sec 25 Notice Served</div><div class="tdate" id="td-s25">19th Jun 2026</div><button class="btn ghost sm tgen" onclick="genNoticeTrack('SEC_25_NOTICE','td-s25')">Generate</button></div>
+        <div class="tstep done" title="Criminal complaint filed in court under Sec 25(1)/27 PSS Act"><div class="tdot"></div><div class="tlabel">Case Filed</div><div class="tdate">10th Jul 2026</div></div>
+        <div class="tstep done" title="Court orders the borrower to appear"><div class="tdot"></div><div class="tlabel">Summons Issued</div><div class="tdate">2nd Sep 2026</div></div>
+        <div class="tstep" title="Warrant issued on non-appearance — bailable / non-bailable"><div class="tdot"></div><div class="tlabel">Warrant Stage</div><div class="tdate">E/R of warrant</div></div>
+        <div class="tstep" title="Case concluded — payment, settlement or court order"><div class="tdot"></div><div class="tlabel">Disposal</div><div class="tdate">Pending</div></div>
         </div>
-      <div class="grid" style="margin-bottom:14px">
-        <div class="kv"><div class="k">Court</div><div class="v">Metropolitan Magistrate Court, Kolkata</div></div>
-        <div class="kv"><div class="k">Case Number</div><div class="v">CS/324793/2026</div></div>
-        <div class="kv"><div class="k">CNR No</div><div class="v">WBCS023248972026</div></div>
-        <div class="kv"><div class="k">Filed On</div><div class="v">10th Jul 2026</div></div>
-        <div class="kv"><div class="k">Next Hearing</div><div class="v">7th Dec 2026</div></div>
-        <div class="kv"><div class="k">Stage</div><div class="v"><span class="badge submitted">E/R OF WARRANT</span></div></div>
-      </div>
       <table class="tbl" style="margin-bottom:22px">
         <thead><tr><th>Initiated On</th><th>Status</th><th>Type</th><th>Mail Requested</th><th>Comments</th><th class="r">Actions</th></tr></thead>
         <tbody id="s25HistBody">
@@ -556,38 +548,32 @@ a{color:var(--brand);text-decoration:none}
       </table>
     </div>
 
-    <!-- 4. sec 138 -->
+    <!-- 4. civil & criminal case details (Litigation MIS) -->
     <div class="panel">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <div class="ptitle" style="margin:0">Sec 138 — NI Act</div>
-        <span class="chip cc">CHEQUE BOUNCE</span>
-      </div>
-      <div class="track">
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">LRN Triggered</div><div class="tdate">2nd Jun 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Cheque Bounced</div><div class="tdate">8th Jul 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Intimation Sent</div><div class="tdate">18th Jul 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Case Filed</div><div class="tdate">14th Aug 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Summons Issued</div><div class="tdate">2nd Sep 2026</div></div>
-        <div class="tstep done"><div class="tdot"></div><div class="tlabel">Bailable Warrant</div><div class="tdate">12th Sep 2026</div></div>
-        <div class="tstep"><div class="tdot"></div><div class="tlabel">Next Hearing</div><div class="tdate">9th Oct 2026</div></div>
-        </div>
-      <div class="grid" style="margin-bottom:14px">
+      <div class="ptitle" style="margin-bottom:2px">Civil &amp; Criminal Actions by Bank</div>
+      <div class="msub" style="margin-bottom:14px">Case MIS + court documents · bulk-uploaded by Legal via FileOps · drives suit-filed reporting to CIC/bureau</div>
+      <div class="grid" style="margin-bottom:18px">
+        <div class="kv"><div class="k">Case Type</div><div class="v">Sec 138 — NI Act</div></div>
         <div class="kv"><div class="k">Court</div><div class="v">JMFC Court 3, Kolkata</div></div>
         <div class="kv"><div class="k">Judge</div><div class="v">Sri A. K. Bhattacharya</div></div>
         <div class="kv"><div class="k">Case Number</div><div class="v">NI/2026/104728</div></div>
         <div class="kv"><div class="k">Filed On</div><div class="v">14th Aug 2026</div></div>
         <div class="kv"><div class="k">Next Hearing</div><div class="v">9th Oct 2026</div></div>
         <div class="kv"><div class="k">Stage</div><div class="v"><span class="badge submitted">SUMMONS ISSUED</span></div></div>
+        <div class="kv"><div class="k">Warrant</div><div class="v"><span class="lz expired">BAILABLE WARRANT</span></div></div>
       </div>
-      <table class="tbl">
-        <thead><tr><th>Initiated On</th><th>Status</th><th>Type</th><th>Mail Requested</th><th>Comments</th><th class="r">Actions</th></tr></thead>
-        <tbody>
-          <tr><td>Sep 12, 2026 3:22 PM</td><td><span class="lz paid">SUCCESS</span></td><td>BAILABLE_WARRANT</td><td>No</td><td>Uploaded from court record (Litigation MIS)</td>
-            <td class="r"><button class="btn primary sm" onclick="toast('Downloading 0b5a5101_bailable_warrant.pdf')">Download &#8681;</button></td></tr>
-          <tr><td>Sep 2, 2026 1:45 PM</td><td><span class="lz paid">SUCCESS</span></td><td>COURT_SUMMONS</td><td>No</td><td>Uploaded from court record (Litigation MIS)</td>
-            <td class="r"><button class="btn primary sm" onclick="toast('Downloading 0b5a5101_court_summons.pdf')">Download &#8681;</button></td></tr>
-        </tbody>
-      </table>
+      <div style="border-top:1px solid var(--line);padding-top:16px">
+      <div class="grid">
+        <div class="kv"><div class="k">Case Type</div><div class="v">Sec 25(1)/27 — PSS Act</div></div>
+        <div class="kv"><div class="k">Court</div><div class="v">Metropolitan Magistrate Court, Kolkata</div></div>
+        <div class="kv"><div class="k">Judge</div><div class="v">N.A.</div></div>
+        <div class="kv"><div class="k">Case Number</div><div class="v">CS/324793/2026</div></div>
+        <div class="kv"><div class="k">Filed On</div><div class="v">10th Jul 2026</div></div>
+        <div class="kv"><div class="k">Next Hearing</div><div class="v">7th Dec 2026</div></div>
+        <div class="kv"><div class="k">Stage</div><div class="v"><span class="badge submitted">E/R OF WARRANT</span></div></div>
+        <div class="kv"><div class="k">Warrant</div><div class="v"><span class="lz expired">ISSUED</span></div></div>
+      </div>
+      </div>
     </div>
 
     <!-- 5. sarfaesi -->
