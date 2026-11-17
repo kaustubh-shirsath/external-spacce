@@ -520,19 +520,6 @@ a{color:var(--brand);text-decoration:none}
               <button class="btn primary sm" onclick="toast('Downloading 0b5a5101_lok_adalat_notice.pdf')">Download &#8681;</button></td></tr>
         </tbody>
       </table>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="ptitle" style="font-size:13.5px;margin:0">Comms Timeline</div>
-          <span class="tagchip">SAMPLE</span>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost sm" onclick="laMarkPaid('Paid')">Mark user paid (demo)</button><button class="btn ghost sm" onclick="laMarkPaid('Settled')">Mark user settled (demo)</button></div>
-      </div>
-      <div class="msub" style="font-size:12px;color:var(--muted);margin-bottom:10px">Comms are sent on fixed days before the Lok Adalat date. Skipped: user paid or settled before the send date. Missed: send date passed before the schedule was uploaded.</div>
-      <table class="tbl">
-        <thead><tr><th>Comm</th><th>Day</th><th>Send Date</th><th>Channel</th><th>Status</th><th>Note</th></tr></thead>
-        <tbody id="laCommsBody"></tbody>
-      </table>
     </div>
 
     <!-- 3. arbitration -->
@@ -1273,7 +1260,7 @@ function genArbNotice(type){
   toast((type==='SEC_21_NOTICE'?'Sec 21':'Samadhan')+' notice generated');
 }
 
-// ===== lok adalat comms (sample) =====
+// ===== lok adalat campaigns (sample, used by the comms dashboard) =====
 const LA_COMMS=[
   {name:'Early intimation',day:'D-45',date:'28th Oct 2026',ch:'SMS',status:'missed',note:'Schedule uploaded on 4th Nov'},
   {name:'Lok Adalat intimation',day:'D-30',date:'12th Nov 2026',ch:'SMS, WhatsApp',status:'sent',note:'—'},
@@ -1283,18 +1270,6 @@ const LA_COMMS=[
   {name:'Final reminder',day:'D-3',date:'9th Dec 2026',ch:'SMS, WhatsApp',status:'scheduled',note:'—'},
   {name:'Day-before reminder',day:'D-1',date:'11th Dec 2026',ch:'SMS',status:'scheduled',note:'—'}
 ];
-const LA_STATUS={sent:['paid','SENT'],scheduled:['active','SCHEDULED'],skipped:['pending','SKIPPED'],missed:['expired','MISSED']};
-function renderLaComms(){
-  const tb=document.getElementById('laCommsBody'); if(!tb) return;
-  tb.innerHTML=LA_COMMS.map(c=>{const s=LA_STATUS[c.status];
-    return `<tr><td>${c.name}</td><td><b>${c.day}</b></td><td>${c.date}</td><td>${c.ch}</td><td><span class="lz ${s[0]}">${s[1]}</span></td><td>${c.note}</td></tr>`;}).join('');
-}
-function laMarkPaid(reason){
-  let n=0;
-  LA_COMMS.forEach(c=>{if(c.status==='scheduled'){c.status='skipped';c.note=reason;n++;}});
-  renderLaComms();
-  toast(n?n+' scheduled comms skipped ('+reason.toLowerCase()+')':'No scheduled comms left');
-}
 function viewDoc(title,sub,file,img){
   const body = img
     ? `<div style="max-height:62vh;overflow:auto;border:1px solid #E3E5EF;border-radius:10px"><img src="${img}" style="width:100%;display:block"></div>`
@@ -1445,7 +1420,6 @@ document.addEventListener('click',(e)=>{if(!e.target.closest('.itip')&&!e.target
 // init
 renderPTabs();
 renderMain();
-renderLaComms();
 </script>
 </body>
 </html>
