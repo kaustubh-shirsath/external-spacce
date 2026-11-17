@@ -483,6 +483,8 @@ a{color:var(--brand);text-decoration:none}
           <button class="btn ghost sm" onclick="genNotice('REMINDER_LETTER')">Generate Reminder</button>
           <button class="btn ghost sm" onclick="genNotice('WARNING_LETTER')">Generate Warning</button>
           <button class="btn ghost sm" onclick="genNotice('CC_PRE_LRN_LETTER')">Generate Pre-LRN</button>
+          <button class="btn ghost sm" onclick="genNotice('SEC_21_NOTICE')">Generate Sec 21</button>
+          <button class="btn ghost sm" onclick="genNotice('SAMADHAN_NOTICE')">Generate Samadhan</button>
         </div>
       </div>
       <table class="tbl">
@@ -502,22 +504,11 @@ a{color:var(--brand);text-decoration:none}
         <div class="ptitle" style="margin:0">Lok Adalat</div>
         <span class="badge submitted">UPCOMING</span>
       </div>
-      <div class="subcard" style="margin-bottom:18px">
-        <div class="grid">
-          <div class="kv"><div class="k">Lok Adalat Date</div><div class="v">12th Dec 2026</div></div>
-          <div class="kv"><div class="k">Time</div><div class="v">10:30 AM</div></div>
-          <div class="kv"><div class="k">Venue</div><div class="v">District Legal Services Authority, Pune</div></div>
-          <div class="kv"><div class="k">POC Contact</div><div class="v">Adv. R. Kulkarni · 98200 11234</div></div>
-        </div>
-      </div>
-
-      <div class="ptitle" style="font-size:13.5px;margin-bottom:8px">Notices</div>
-      <table class="tbl" style="margin-bottom:22px">
-        <thead><tr><th>Notice</th><th>Case Number</th><th>Received On</th><th class="r">Actions</th></tr></thead>
+      <table class="tbl">
+        <thead><tr><th>Lok Adalat Date</th><th>Case Number</th><th>Venue</th><th class="r">Actions</th></tr></thead>
         <tbody>
-          <tr><td>Lok Adalat Notice</td><td>LA/PUN/2026/08812</td><td>4th Nov 2026</td>
-            <td class="r"><button class="btn ghost sm" onclick="viewDoc('Lok Adalat Notice','Case LA/PUN/2026/08812','0b5a5101_lok_adalat_notice.pdf')">View</button>
-              <button class="btn primary sm" onclick="toast('Downloading 0b5a5101_lok_adalat_notice.pdf')">Download &#8681;</button></td></tr>
+          <tr><td>12th Dec 2026</td><td>LA/PUN/2026/08812</td><td>District Legal Services Authority, Pune</td>
+            <td class="r"><button class="btn primary sm" onclick="toast('Downloading 0b5a5101_lok_adalat_notice.pdf')">Download &#8681;</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -526,10 +517,6 @@ a{color:var(--brand);text-decoration:none}
     <div class="panel">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
         <div class="ptitle" style="margin:0">Arbitration</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn ghost sm" onclick="genArbNotice('SEC_21_NOTICE')">Generate Sec 21</button>
-          <button class="btn ghost sm" onclick="genArbNotice('SAMADHAN_NOTICE')">Generate Samadhan</button>
-        </div>
       </div>
       <div class="track">
         <div class="tstep done"><div class="tdot"></div><div class="tlabel">LRN Triggered <span class="info" onclick="stageTip(event,'LRN Triggered','Loan Recall Notice issued to the borrower, demanding repayment of the full outstanding amount within the notice period, prior to initiation of legal proceedings.')">i</span></div><div class="tdate">12th Mar 2026</div></div>
@@ -540,18 +527,16 @@ a{color:var(--brand);text-decoration:none}
         <div class="tstep done"><div class="tdot"></div><div class="tlabel">Sec 17 Interim Order <span class="info" onclick="stageTip(event,'Sec 17 Interim Order','Interim order passed by the arbitrator under Section 17, permitting protective measures such as freezing of the borrower\'s bank accounts pending the final award.')">i</span></div><div class="tdate" id="td-arb-5">28th Jul 2026</div></div>
         <div class="tstep"><div class="tdot"></div><div class="tlabel">Award <span class="info" onclick="stageTip(event,'Award','The arbitrator\'s final and binding decision on the claim. An arbitral award is enforceable in the same manner as a decree of a court.')">i</span></div><div class="tdate">Pending</div></div>
       </div>
-      <div class="msub" style="font-size:12px;color:var(--muted);margin-bottom:10px">Only Sec 21 and Samadhan notices can be generated here. Vendor notices (nomination, statement of claim, interim order) are uploaded through FileOps.</div>
+      <div class="msub" style="font-size:12px;color:var(--muted);margin-bottom:10px">Arbitration notices come from the vendor and are uploaded by the legal team through FileOps.</div>
       <table class="tbl">
-        <thead><tr><th>Notice Name</th><th>Notice Date</th><th>Mail Requested</th><th>Source</th><th class="r">Actions</th></tr></thead>
+        <thead><tr><th>Notice Name</th><th>Notice Date</th><th>Mail Requested</th><th class="r">Actions</th></tr></thead>
         <tbody id="arbHistBody">
-          <tr><td>Sec 17 Interim Order</td><td>28th Jul 2026</td><td>No</td><td><span class="tagchip">Vendor upload</span></td>
+          <tr><td>Sec 17 Interim Order</td><td>28th Jul 2026</td><td>No</td>
             <td class="r"><button class="btn primary sm" onclick="dlDoc('docs/interim_order.png','0b5a5101_interim_order.png')">Download &#8681;</button></td></tr>
-          <tr><td>Statement of Claim</td><td>19th May 2026</td><td>No</td><td><span class="tagchip">Vendor upload</span></td>
+          <tr><td>Statement of Claim</td><td>19th May 2026</td><td>No</td>
             <td class="r"><button class="btn primary sm" onclick="dlDoc('docs/statement_of_claim.png','0b5a5101_statement_of_claim.png')">Download &#8681;</button></td></tr>
-          <tr><td>Nomination Notice</td><td>2nd May 2026</td><td>No</td><td><span class="tagchip">Vendor upload</span></td>
+          <tr><td>Nomination Notice</td><td>2nd May 2026</td><td>No</td>
             <td class="r"><button class="btn primary sm" onclick="toast('Downloading 0b5a5101_nomination_notice.pdf')">Download &#8681;</button></td></tr>
-          <tr><td>Sec 21 Notice</td><td>18th Apr 2026</td><td>Yes</td><td><span class="tagchip">Generated</span></td>
-            <td class="r"><button class="btn primary sm" onclick="toast('Downloading 0b5a5101_sec21_notice.pdf')">Download &#8681;</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -1251,13 +1236,6 @@ function genNotice(type){
   const tb=document.getElementById('pnBody');
   tb.insertAdjacentHTML('afterbegin',`<tr><td>Sep 23, 2026 6:40 PM</td><td><span class="lz pending">QUEUED</span></td><td>${type}</td><td>No</td><td>Manually triggered from spacce</td><td class="r"><span style="color:var(--muted);font-size:12.5px">—</span></td></tr>`);
   toast(type+' generation queued');
-}
-const ARB_LABEL={SEC_21_NOTICE:'Sec 21 Notice',SAMADHAN_NOTICE:'Samadhan Notice'};
-function genArbNotice(type){
-  const tb=document.getElementById('arbHistBody');
-  const file='0b5a5101_'+type.toLowerCase()+'.pdf';
-  tb.insertAdjacentHTML('afterbegin',`<tr><td>${ARB_LABEL[type]}</td><td>17th Nov 2026</td><td>Yes</td><td><span class="tagchip">Generated</span></td><td class="r"><button class="btn primary sm" onclick="toast('Downloading ${file}')">Download &#8681;</button></td></tr>`);
-  toast((type==='SEC_21_NOTICE'?'Sec 21':'Samadhan')+' notice generated');
 }
 
 // ===== lok adalat campaigns (sample, used by the comms dashboard) =====
