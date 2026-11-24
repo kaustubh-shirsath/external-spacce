@@ -257,3 +257,23 @@ body{background:#fff;color:var(--g900)}
   .pf-body{padding:10px 12px}
   .nav .navsearch{width:100%;order:10}
 }
+
+/* ---- v3: date filter, 5-tile connectivity, TL row link ---- */
+.pf-tabs-r{display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap}
+.pf-tabs-r .pf-asof{padding:0}
+.pf-datebtn{gap:7px;color:var(--g900);font-weight:500}
+.pf-datebtn svg{color:var(--g500)}
+.pf-datebtn.act{border-color:var(--in500);background:var(--in50);color:var(--in700)}
+.pf-datebtn.act svg{color:var(--in600)}
+.pf-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.pf-dates{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pf-dates label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--g500);padding:0}
+.pf-dates input{border:1px solid var(--g300);border-radius:6px;padding:5px 6px;font-size:12px;color:var(--g900);font-family:inherit;width:100%}
+.pf-pop .acts .pf-hint{font-size:11px;color:var(--g400);align-self:center}
+.pf-grid2.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:1000px){.pf-grid2.g5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.pf-grid2.g5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pf-lnk{font-size:11px;font-weight:400;color:var(--in600);margin-left:6px;cursor:pointer}
+.pf-lnk:hover{text-decoration:underline}
+.pf-kpi dd .pf-pill{font-size:11.5px}
+@media(max-width:760px){.pf-tabs-r{width:100%;justify-content:space-between}}
