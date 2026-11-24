@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>External SpaCCe — Agency Portal</title>
+<title>External SpaCCe — Agent Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F4F5FA; --surface:#fff; --line:#ECEEF5; --line2:#F1F2F8;
@@ -234,6 +236,7 @@ a{color:var(--brand);text-decoration:none}
   .navsearch{order:10;width:100%}
 }
 </style>
+<link rel="stylesheet" href="portfolio.css">
 </head>
 <body>
 
@@ -251,22 +254,11 @@ a{color:var(--brand);text-decoration:none}
   </form>
   <button class="nbtn primary" onclick="downloadPortfolio()">&#8681; Download Agent Portfolio</button>
   <button class="nbtn ghost" onclick="openFeedback()">&#8682; Upload Feedback</button>
-  <span class="tag-admin">ADMIN</span>
-  <span class="user"><span class="avatar"></span>agency.admin</span>
+  <span class="user" id="pfUser"><span class="avatar"></span>agency.admin</span>
 </div>
 
-<!-- ===== HOME ===== -->
-<div class="page" id="view-home">
-
-  <div class="h1">My Portfolio — Collection</div>
-  <div class="sub">Kaustubh Shirsath · Borrow, Credit Card, EDI &amp; EDL — metrics shown per product, not summed</div>
-
-  <!-- ===== tabs: Summary (product + product×bucket) | Borrow | Credit Card | EDI | EDL (case list only) ===== -->
-  <div class="ptabs" id="ptabs"></div>
-
-  <div id="productPanels"></div>
-
-</div>
+<!-- ===== HOME: Agent Portfolio v2 (role-aware, rendered by portfolio.js) ===== -->
+<div class="pf-page" id="view-home"><div id="pfRoot"></div></div>
 
 <!-- ===== PROFILE ===== -->
 <div class="page hidden" id="view-profile">
@@ -622,358 +614,19 @@ a{color:var(--brand);text-decoration:none}
 <div id="itipMount"></div>
 
 <script>
-/* =========================================================================
-   INFO MAP — every (i) button on the home page reads from here.
-   These are the REAL backend field names / calculations that would back
-   each element once this screen is wired to live APIs (verified against
-   cops-svc source + EMR table schemas — see collections_agent knowledge base).
-   ========================================================================= */
-const INFO = {
-  // ---- Borrow tiles ----
-  'bor.cases': {t:'Total Cases', f:"COUNT(*) FROM manual_production_tables.current_month_collections_mis\nWHERE tc_email_id = :agent AND mis_date = (latest)", n:'Live today via GET /agent-portfolio/agent-summary (ComputedSummaryDTO.totalCases) — already product-agnostic.'},
-  'bor.pos': {t:'Total POS', f:'SUM(pos) — same filter as above.\npos = principal outstanding, already in ₹ (no unit conversion).', n:'Backs ComputedSummaryDTO.totalPOS.'},
-  'bor.res': {t:'Resolution Rate (Flows)', f:"COUNT(current_flow <> 'FWD') ÷ COUNT(*)\ncurrent_flow ∈ {FWD, NORM, STBL, RB} — cumulative since cycle start (6th→5th).", n:'Filter on current_bucket, never source_bucket (source_bucket undercounts ~2×) — per analyst KB.'},
-  'bor.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE user_type=\'SLICE\' AND uuid IN (agent\'s book)\nDenominator: SUM(pos) for the agent\'s whole book', n:'Real, queried this session: 9 of 480 uuids have a settlement record · ₹1.3L recovered ÷ ₹63.37L POS = 2.05%.'},
-  'bor.col.bucket': {t:'Bucket', f:'current_bucket — Bkt 0 … Bkt 6+ (ALLOCATION_BUCKET enum in cops-svc). Month-DPD semantics: Bkt0 = DPD≤30, +30 days per step.'},
-  'bor.col.dpd': {t:'DPD', f:'dpd column — days past due as of mis_date.'},
-  'bor.col.pos': {t:'POS', f:'pos — principal outstanding, ₹ (no unit conversion needed).'},
-  'bor.col.emi': {t:'Overdue Amount', f:'emi — overdue EMI amount, ₹. This is the "what clears the immediate due" figure, distinct from pos.'},
-  'bor.col.profile': {t:'Profile Type', f:'profile_category — salaried A/B/C, student, freelancer.'},
-  'bor.col.flow': {t:'Flow', f:"current_flow — FWD (unresolved) / NORM (normalized) / STBL (stabilised) / RB (rolled back, improved a bucket)."},
-  'bor.col.disp': {t:'Last Disposition', f:'latest_disposition — most recent call outcome (PAID / RNR / NC / Voicemail / PTP…), sourced from copsdb_gold.collection_note joined by uuid.'},
-  'bor.col.agent': {t:'Agent Email', f:'tc_email_id — the allocated tele-caller for this cycle.'},
-  'pii.uname': {t:'User Name', f:'Borrow: name FROM manual_production_tables_pii.collection_allocation_automation\nCC/EDI/EDL: equivalent PII directory per product (not yet catalogued in this session).', n:'PII table, joined separately from the MIS — masked here, not pulled for this mockup.'},
-  'pii.uphone': {t:'User Phone', f:'registered_phone_number FROM exploratory_analytics_pii.phone_numbers_ranked_directory_v2, variant = 1-registered_phone_number (Borrow-confirmed path; other products use an equivalent PII directory).', n:'Masked here, not pulled for this mockup.'},
-  'bor.col.category': {t:'Category', f:'disposition_category_code — category tag on the most recent collection_note (distinct from latest_disposition, which is the free-text/code result of the call).'},
-  'bor.col.tags': {t:'Tags', f:'collections_triggers.flag, array-joined — e.g. retain, cash_rich, repayment_extension. From manual_production_tables_pii.collections_triggers for the current allocation_month.'},
-  'bor.col.calls': {t:'Total Calls', f:"COUNT(*) FROM copsdb_gold.tele_call_log WHERE uuid = :uuid AND cycle = current — dialler attempt count this cycle."},
-  'bor.col.comments': {t:'Comments', f:'comments — free-text field on the latest copsdb_gold.collection_note row.'},
-  'bor.col.followup': {t:'Follow Up Date', f:'followupdate — set by the agent on the last disposition, from collection_note.'},
-  'bor.col.multi': {t:'Multi Allocation', f:"Derived: 'Multi' if allocation_user.multi_allocation_tele_calling_ids or multi_allocation_field_ids is non-empty, else 'Single'. See MULTI ALLOCATION HLD (copsdb_gold.allocation_user)."},
-  'bor.col.action': {t:'Action', f:'UI-only — opens the case detail view (no new backend field, routes to the same customer profile page reachable from search).'},
-
-  // ---- CC tiles ----
-  'cc.cases': {t:'Total Cases', f:'COUNT(DISTINCT uuid) FROM manual_production_tables.current_month_collections_mis_cc\nWHERE tc_email_id = :agent AND mis_Date = (latest)', n:'CC MIS is bill-level — always COUNT(DISTINCT uuid) for user counts, never COUNT(*).'},
-  'cc.bill': {t:'Total POS', f:'SUM(remaining_bill_amount) / 100\n— stored in paise, ÷100 for ₹. Includes principal + interest + charges + GST.', n:'CC has no separate "principal-only POS" tile — remaining_bill_amount is the closest analogue to Borrow/EDI/EDL\'s POS, since it\'s the full payoff figure for this revolving product.'},
-  'cc.res': {t:'Resolution Rate (Flows)', f:"COUNT(status IN ('MINDUE_PAID','PAID')) ÷ COUNT(*)\nstatus reclassified from bill_payment_status per the PARTIAL_PAID→MINDUE_PAID rule (bill_amount − min_due_amount ≥ remaining_bill_amount).", n:"CC's flow-equivalent is bill status — MINDUE_RESOLVED is a first-class allocation outcome in cops-svc (AgentSummaryComputationServiceV2), Borrow has no equivalent."},
-  'cc.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE uuid IN (agent\'s book)\nDenominator: SUM(remaining_bill_amount)/100 for the agent\'s whole book', n:'Real, queried this session: 0 of 373 uuids have any settlement_users row (only user_type=SLICE/BANK exist in that table). CC settlement/NPA workflow is not built yet — 0.0% reflects a genuine product gap, not a query miss.'},
-  'cc.col.bucket': {t:'Bucket', f:'current_bucket — same Bkt0…6+ convention as Borrow (CC bills cycle monthly too, unlike EDI).'},
-  'cc.col.dpd': {t:'DPD', f:'dpd — days past due on the bill.'},
-  'cc.col.bill': {t:'Remaining Bill', f:'remaining_bill_amount / 100 (paise→₹). Total payoff figure.'},
-  'cc.col.mindue': {t:'Min Due', f:'min_due_amount / 100 (paise→₹). Minimum to avoid further DPD movement.'},
-  'cc.col.status': {t:'Status', f:'bill_payment_status, reclassified: MINDUE_PAID / PAID / PARTIAL_PAID / UNPAID.'},
-  'cc.col.profile': {t:'Profile Type', f:'profile_type — salaried / freelancer / student.'},
-
-  // ---- EDI tiles ----
-  'edi.cases': {t:'Total Cases', f:'COUNT(*) FROM s3_tool_propagator.collections_edi_mis_test\nWHERE tc_email = :agent AND mis_date = (latest)', n:'EDI = merchant daily-instalment product — table is genuinely different from the Borrow/CC MIS, not just a filter.'},
-  'edi.pos': {t:'Total POS', f:'SUM(pos) — EDI has no separate "bill" concept like CC; pos is the whole outstanding.'},
-  'edi.res': {t:'Resolution Rate (Flows)', f:"COUNT(current_flow IN ('Resolved','STBL','RB')) ÷ COUNT(*)\n— literal cumulative-since-day-1, no monthly cycle anchor exists for this product."},
-  'edi.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE user_type=\'BANK\' AND uuid IN (agent\'s book)\nDenominator: SUM(pos) for the agent\'s whole book', n:'Real, queried this session: 0 of 66 uuids have a settlement record — this book is DPD 1-30, too early-stage for settlement to have kicked in (settlement typically starts 91+ DPD).'},
-  'edi.col.band': {t:'DPD Band', f:'morning_bucket — free-text day-range label ("DPD 1 to 2", "DPD 7 to 14", "DPD 30+"), computed upstream in the daily EDI MIS job. NOT the same enum as Borrow\'s ALLOCATION_BUCKET — forcing EDI into Bkt0-6+ would misrepresent urgency (a Bkt0-equivalent EDI case can be DPD 25 already).'},
-  'edi.col.dpd': {t:'DPD (days)', f:'dpd — exact day count, the primary sort key for this product.'},
-  'edi.col.sub': {t:'Sub-Category', f:'sub_category — merchant industry (RETAIL / MANUFACTURING / SERVICES…). Changes the collections conversation script.'},
-  'edi.col.turnover': {t:'Turnover Band', f:'estimated_annual_turnover — merchant\'s declared annual turnover band.'},
-  'edi.col.pos': {t:'POS', f:'pos — total outstanding, ₹.'},
-  'edi.col.status': {t:'Status', f:'current_flow — FWD / Resolved / STBL / RB.'},
-  'edi.col.disp': {t:'Last Disposition', f:'latest_disposition (uncontacted / RNR / PTP / PAID…).'},
-
-  // ---- EDL tiles ----
-  'edl.cases': {t:'Total Cases', f:"COUNT(*) FROM s3_tool_propagator.bank_collections_mis\nWHERE agent_id = :agent AND loan_account_status='Active' AND bucket <> 'Standard'\nAND product_name IN (edl_inventory, edl_migrated, edl_property, micro_edl)", n:'EDL sits inside the same bank_collections_mis table as all other CBS/merchant products — scoped here purely by product_name.'},
-  'edl.pos': {t:'Total POS', f:'SUM(principal_outstanding) — ₹, no unit conversion.'},
-  'edl.res': {t:'Resolution Rate (Flows)', f:"COUNT(outcome <> 'FWD') ÷ COUNT(*)\noutcome ∈ {Norm, RB, Stable, FWD} — Bank-native outcome column, same as EDL/Bank loans generally."},
-  'edl.npa': {t:'Rate of Recovery (NPA/Settlement)', f:'Numerator: SUM(copsdb_gold.settlement_users.actual_total_amount_paid)\n  WHERE user_type=\'BANK\' AND account_number IN (agent\'s book, joined via loan_account_no)\nDenominator: SUM(principal_outstanding) for the agent\'s whole book', n:'Real, queried this session: 0 of 34 loans have a settlement record this cycle — small book (n=34), plausible to have zero even with a 180+ case present.'},
-  'edl.col.bucket': {t:'Bucket', f:"bucket — Bank-native SMA/SS convention: 'SMA - 0' / 'SMA - 1' / 'SMA - 2' / 'SS - 1..3' / '180+'. A THIRD distinct bucket vocabulary from Borrow's Bkt0-6+ and EDI's DPD-day bands — do not normalize these into one label set in the UI."},
-  'edl.col.dpd': {t:'DPD', f:'dpd column.'},
-  'edl.col.pos': {t:'POS', f:'principal_outstanding, ₹.'},
-  'edl.col.overdue': {t:'Overdue', f:'total_overdue, ₹ — incl. late interest + penalty.'},
-  'edl.col.outcome': {t:'Outcome', f:"outcome — Norm / RB (rolled back to a better bucket) / Stable / FWD."},
-  'edl.col.product': {t:'Product', f:'product_name — edl_inventory / edl_migrated / edl_property / micro_edl (raw MIS value).'},
-};
-
-/* generic info-tooltip renderer, works for any (i) button anywhere on the page */
+/* INFO map — every (i) button reads from here; the portfolio view (portfolio.js) adds its keys. */
+const INFO = {};
 function ib(key){ return `<span class="info" data-k="${key}" onclick="showInfo(event)">i</span>`; }
 function closeInfo(){document.getElementById('itipMount').innerHTML='';document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));}
-
-/* =========================================================================
-   REAL DATA — pulled from EMR this session, one agent per product
-   (Borrow: sudhansu.sahu.cw@slicebank.com · CC: anurag.s.cw@slicebank.com
-    EDI: praveen.jadhav.cw@slicebank.com · EDL: agent_id 104380 / Mukul Moral)
-   presented here as ONE agent's combined multi-product portfolio.
-   ========================================================================= */
-const PRODUCTS = {
-  borrow:{
-    label:'Borrow', color:'#2A78D6', agent:'sudhansu.sahu.cw@slicebank.com',
-    tiles:[
-      {k:'bor.cases', l:'Total Cases', v:'480'},
-      {k:'bor.pos', l:'Total POS', v:'₹63.37L'},
-      {k:'bor.res', l:'Resolution Rate (Flows)', v:'9.4%'},
-      {k:'bor.npa', l:'Rate of Recovery (NPA/Settlement)', v:'2.05%'},
-    ],
-    bucketHead:[['Bucket','bor.col.bucket'],['Cases',null],['POS','bor.col.pos'],['Resolution %',null]],
-    buckets:[
-      {name:'Bkt 6', cls:'b3', cases:478, pos:'₹62.11L', res:'9.0%', cr:{FWD:435,NORM:20,STBL:20,RB:3}},
-      {name:'Bkt 6+', cls:'b4', cases:2, pos:'₹1.26L', res:'100.0%', cr:{NORM:1,STBL:1}},
-    ],
-    total:{name:'Total', cases:480, pos:'₹63.37L', res:'9.4%', cr:{FWD:435,NORM:21,STBL:21,RB:3}},
-    tblHead:[['UUID',null],['Agent Email','bor.col.agent'],['User Name','pii.uname'],['User Phone','pii.uphone'],['Category','bor.col.category'],['Outcome','bor.col.flow'],['Overdue Amount','bor.col.emi'],['POS','bor.col.pos'],['Profile Type','bor.col.profile'],['Bucket','bor.col.bucket'],['Tags','bor.col.tags'],['Total Calls','bor.col.calls'],['Comments','bor.col.comments'],['Last Disposition','bor.col.disp'],['Follow Up Date','bor.col.followup'],['Multi Allocation','bor.col.multi'],['Action','bor.col.action']],
-    rows:[
-      ['1aa8a820-8bcd-11ec-b470-b392213adebc','sudhansu.sahu.cw@slicebank.com','Customer','••••••','PAID','fwd','₹1.90L','₹1.88L','salaried A','Bkt 6','—','3','—','PAID','—','Single','⋯'],
-      ['0cbc0270-4aa5-11ec-a2b4-934f7559cd96','sudhansu.sahu.cw@slicebank.com','Customer','••••••','RNR','fwd','₹1.54L','₹1.24L','salaried A','Bkt 6','—','5','—','RNR','12 Aug 2026','Single','⋯'],
-      ['4fc34566-eb96-4189-91fa-9129b3e5e59c','sudhansu.sahu.cw@slicebank.com','Customer','••••••','PAID','stbl','₹1.02L','₹0.80L','salaried B','Bkt 6','retain','2','—','PAID','—','Single','⋯'],
-      ['60807741-4181-404e-a344-8e10280ec575','sudhansu.sahu.cw@slicebank.com','Customer','••••••','—','norm','₹0.99L','₹0.97L','salaried C','Bkt 6+','—','1','—','—','—','Single','⋯'],
-      ['77f20f38-8c81-4350-856e-93ea5f93f4ee','sudhansu.sahu.cw@slicebank.com','Customer','••••••','RNR','fwd','₹0.88L','₹0.76L','salaried B','Bkt 6','—','4','—','RNR','11 Aug 2026','Single','⋯'],
-      ['dd826370-98c2-11ec-a1bb-b184eb30bef7','sudhansu.sahu.cw@slicebank.com','Customer','••••••','NC','fwd','₹0.79L','₹0.71L','salaried B','Bkt 6','—','6','—','NC','11 Aug 2026','Single','⋯'],
-      ['688d01c0-cf44-11ec-b198-5b235e99a6d8','sudhansu.sahu.cw@slicebank.com','Customer','••••••','RNR','fwd','₹0.69L','₹0.66L','student','Bkt 6','—','2','—','RNR','13 Aug 2026','Single','⋯'],
-    ],
-  },
-  cc:{
-    label:'Credit Card', color:'#0A7C4E', agent:'anurag.s.cw@slicebank.com',
-    tiles:[
-      {k:'cc.cases', l:'Total Cases', v:'373'},
-      {k:'cc.bill', l:'Total POS', v:'₹59.91L'},
-      {k:'cc.res', l:'Resolution Rate (Flows)', v:'81.8%'},
-      {k:'cc.npa', l:'Rate of Recovery (NPA/Settlement)', v:'0.0%'},
-    ],
-    bucketHead:[['Bucket','bor.col.bucket'],['Cases',null],['Remaining Bill','cc.col.bill'],['Min-Due Res %',null]],
-    buckets:[
-      {name:'Bkt 0', cls:'b0', cases:364, pos:'₹58.62L', res:'81.3%', cr:{MINDUE_PAID:227,PAID:69,UNPAID:67,PARTIAL_PAID:1}},
-      {name:'Bkt 1', cls:'b1', cases:4, pos:'₹1.02L', res:'100.0%', cr:{MINDUE_PAID:4}},
-      {name:'Bkt 2', cls:'b2', cases:2, pos:'₹0.19L', res:'100.0%', cr:{MINDUE_PAID:2}},
-      {name:'Bkt 3', cls:'b3', cases:3, pos:'₹0.12L', res:'100.0%', cr:{MINDUE_PAID:2,PAID:1}},
-    ],
-    total:{name:'Total', cases:373, pos:'₹59.91L', res:'81.8%', cr:{MINDUE_PAID:235,PAID:70,UNPAID:67,PARTIAL_PAID:1}},
-    tblHead:[['UUID',null],['Agent Email','bor.col.agent'],['User Name','pii.uname'],['Bucket','bor.col.bucket'],['DPD','cc.col.dpd'],['Remaining Bill','cc.col.bill'],['Min Due','cc.col.mindue'],['Status','cc.col.status'],['Profile Type','cc.col.profile'],['Follow Up Date','bor.col.followup'],['Action','bor.col.action']],
-    rows:[
-      ['ae59b276-af7d-48f8-b8a8-43828454b3f3','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹2.74L','₹0.42L','mindue','freelancer','—','⋯'],
-      ['89d13239-738e-4027-b115-2f36dd7fbff2','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹2.23L','₹0.43L','unpaid','freelancer','12 Aug 2026','⋯'],
-      ['e413e520-7ecc-11ec-9dac-1730a0238bae','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹1.24L','₹0.13L','mindue','salaried','—','⋯'],
-      ['996cf72a-d64f-49b5-ae79-720818c75f77','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹1.05L','₹0.12L','mindue','salaried','—','⋯'],
-      ['17263b1b-58ab-4b82-8d07-73638b1b1930','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹1.04L','₹0.50L','mindue','salaried','—','⋯'],
-      ['414f49f5-9328-4539-86ee-96d76b5768c3','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹0.96L','₹0.08L','mindue','salaried','—','⋯'],
-      ['e50525e5-fa27-427e-b2be-bdbac0a94df2','anurag.s.cw@slicebank.com','Customer','Bkt 0','1','₹0.93L','₹0.09L','mindue','salaried','—','⋯'],
-    ],
-  },
-  edi:{
-    label:'EDI', color:'#EB6834', agent:'praveen.jadhav.cw@slicebank.com',
-    tiles:[
-      {k:'edi.cases', l:'Total Cases', v:'66'},
-      {k:'edi.pos', l:'Total POS', v:'₹83.91L'},
-      {k:'edi.res', l:'Resolution Rate (Flows)', v:'48.5%'},
-      {k:'edi.npa', l:'Rate of Recovery (NPA/Settlement)', v:'0.0%'},
-    ],
-    bucketHead:[['DPD Band','edi.col.band'],['Cases',null],['POS','edi.col.pos'],['Resolution %',null]],
-    buckets:[
-      {name:'DPD 1 to 2', cls:'b0', cases:34, pos:'₹41.49L', res:'85.3%', cr:{Resolved:21,STBL:8,FWD:5}},
-      {name:'DPD 3 to 6', cls:'b1', cases:3, pos:'₹4.89L', res:'33.3%', cr:{STBL:1,FWD:2}},
-      {name:'DPD 7 to 14', cls:'b2', cases:9, pos:'₹12.39L', res:'11.1%', cr:{RB:1,FWD:8}},
-      {name:'DPD 15 to 30', cls:'b3', cases:13, pos:'₹17.15L', res:'7.7%', cr:{RB:1,FWD:12}},
-      {name:'DPD 30+', cls:'b4', cases:7, pos:'₹7.99L', res:'0.0%', cr:{FWD:7}},
-    ],
-    total:{name:'Total', cases:66, pos:'₹83.91L', res:'48.5%', cr:{Resolved:21,STBL:9,FWD:34,RB:2}},
-    tblHead:[['UUID / CIF',null],['Agent Email','bor.col.agent'],['DPD Band','edi.col.band'],['DPD','edi.col.dpd'],['Sub-Category','edi.col.sub'],['Turnover','edi.col.turnover'],['POS','edi.col.pos'],['Status','edi.col.status'],['Last Disposition','edi.col.disp'],['Action','bor.col.action']],
-    rows:[
-      ['c63370e1-29cd-4260-a1ad-f63d8ebae8bd / 380004090416','praveen.jadhav.cw@slicebank.com','DPD 30+','141','MANUFACTURING','₹5-10L','₹0.23L','fwd','uncontacted','⋯'],
-      ['e42892f1-637b-44a8-8b44-2a1c0933ee59 / 380002887960','praveen.jadhav.cw@slicebank.com','DPD 30+','70','SERVICES','₹50L-1Cr','₹1.96L','fwd','uncontacted','⋯'],
-      ['8f5a4a51-1ad7-4c5f-afb1-5a09cbe5c13c / 380004301942','praveen.jadhav.cw@slicebank.com','DPD 30+','38','RETAIL','₹10-20L','₹0.76L','fwd','RNR','⋯'],
-      ['2d252eda-e10b-4d6c-8e09-74b307277bfe / 380001137383','praveen.jadhav.cw@slicebank.com','DPD 30+','35','GROCERY','₹5-10L','₹0.28L','fwd','PTP','⋯'],
-      ['66f900ce-836c-4c8d-b331-cf29078f1e68 / 380004233089','praveen.jadhav.cw@slicebank.com','DPD 30+','34','HEALTH','₹5-10L','₹3.94L','fwd','RNR','⋯'],
-      ['905f960e-e9de-4b2a-9dca-11c91565e299 / 380002867888','praveen.jadhav.cw@slicebank.com','DPD 15 to 30','22','RETAIL','₹50L-1Cr','₹1.10L','fwd','PTP','⋯'],
-      ['30681991-e38d-4645-b1ba-9c5c11ab0f92 / 380003142314','praveen.jadhav.cw@slicebank.com','DPD 15 to 30','22','FOOD','₹10-20L','₹2.42L','res','PAID','⋯'],
-    ],
-  },
-  edl:{
-    label:'EDL', color:'#6B21A8', agent:'Mukul Moral (104380)',
-    tiles:[
-      {k:'edl.cases', l:'Total Cases', v:'34'},
-      {k:'edl.pos', l:'Total POS', v:'₹71.85L'},
-      {k:'edl.res', l:'Resolution Rate (Flows)', v:'73.5%'},
-      {k:'edl.npa', l:'Rate of Recovery (NPA/Settlement)', v:'0.0%'},
-    ],
-    bucketHead:[['Bucket','edl.col.bucket'],['Cases',null],['POS','edl.col.pos'],['Resolution %',null]],
-    buckets:[
-      {name:'180+', cls:'b4', cases:3, pos:'₹11.41L', res:'0.0%', cr:{FWD:3}},
-      {name:'SMA - 0', cls:'b0', cases:18, pos:'₹39.96L', res:'83.3%', cr:{Stable:15,FWD:3}},
-      {name:'SMA - 1', cls:'b1', cases:9, pos:'₹14.22L', res:'88.9%', cr:{Stable:7,RB:1,FWD:1}},
-      {name:'SMA - 2', cls:'b2', cases:4, pos:'₹6.26L', res:'50.0%', cr:{Stable:2,FWD:2}},
-    ],
-    total:{name:'Total', cases:34, pos:'₹71.85L', res:'73.5%', cr:{Stable:24,RB:1,FWD:9}},
-    tblHead:[['Loan A/C No',null],['Agent Name',null],['Customer ID',null],['Bucket','edl.col.bucket'],['DPD','edl.col.dpd'],['POS','edl.col.pos'],['Overdue','edl.col.overdue'],['Outcome','edl.col.outcome'],['Product','edl.col.product'],['Action','bor.col.action']],
-    rows:[
-      ['006037051000017','Mukul Moral','380000775453','SMA - 0','1','₹9.63L','₹0.28L','stable','edl_migrated_greater_than_5_lacs','⋯'],
-      ['009437051000017','Mukul Moral','380000394907','180+','213','₹9.07L','₹7.04L','fwd','edl_migrated_greater_than_5_lacs','⋯'],
-      ['006039691000114','Mukul Moral','230000021794','SMA - 0','1','₹4.61L','₹0.15L','stable','edl_inventory','⋯'],
-      ['006036061000741','Mukul Moral','180000707493','SMA - 0','1','₹3.70L','₹0.06L','fwd','edl_migrated','⋯'],
-      ['006039691000109','Mukul Moral','231000073537','SMA - 0','1','₹3.14L','₹0.14L','stable','edl_inventory','⋯'],
-      ['006039691000126','Mukul Moral','380003808480','SMA - 1','32','₹2.71L','₹0.11L','stable','edl_inventory','⋯'],
-      ['006039691000035','Mukul Moral','380000459773','SMA - 2','62','₹2.45L','₹0.27L','fwd','edl_inventory','⋯'],
-    ],
-  },
-};
-
-let activeTab='summary';
-const PRODUCT_ORDER=['borrow','cc','edi','edl'];
-
-function renderPTabs(){
-  const tabs = [{key:'summary',label:'Summary'}, ...PRODUCT_ORDER.map(k=>({key:k,label:PRODUCTS[k].label}))];
-  document.getElementById('ptabs').innerHTML = tabs.map(t=>{
-    if(t.key==='summary'){
-      return `<div class="ptab ${activeTab==='summary'?'active':''}" onclick="switchTab('summary')">Summary</div>`;
-    }
-    const p=PRODUCTS[t.key];
-    return `<div class="ptab ${t.key===activeTab?'active':''}" onclick="switchTab('${t.key}')">
-      <span class="pdot" style="background:${p.color}"></span>${p.label}
-      <span class="pc">${p.total.cases.toLocaleString('en-IN')}</span>
-    </div>`;
-  }).join('');
-}
-
-function switchTab(k){ activeTab=k; renderPTabs(); renderMain(); window.scrollTo({top:document.getElementById('ptabs').offsetTop-80, behavior:'smooth'}); }
-function renderMain(){ activeTab==='summary' ? renderSummary() : renderCaseList(activeTab); }
-
-function flowChipCls(v){
-  const s=(v||'').toString().toLowerCase();
-  if(s==='fwd') return 'fwd';
-  if(s==='res'||s==='resolved'||s==='paid') return s==='paid'?'paid':'res';
-  if(s==='mindue') return 'mindue';
-  if(s==='stbl'||s==='stable') return 'stable';
-  if(s==='rb'||s==='norm') return 'rb';
-  if(s==='unpaid') return 'unpaid';
-  if(s==='partial') return 'partial';
-  return '';
-}
-function isFlowVal(v){ return ['fwd','stbl','norm','rb','res','resolved','paid','mindue','unpaid','partial','stable'].includes((v||'').toString().toLowerCase()); }
-
-/* ===== SUMMARY TAB: product-level tiles + product × bucket tables, stacked per product ===== */
-function renderSummary(){
-  const blocks = PRODUCT_ORDER.map(pk=>{
-    const p = PRODUCTS[pk];
-    const tilesHtml = p.tiles.map(t=>`
-      <div class="tile">
-        <div class="tl">${t.l} ${ib(t.k)}</div>
-        <div class="tv">${t.v}</div>
-      </div>`).join('');
-
-    const bucketRows = p.buckets.map((b,i)=>`
-      <tr>
-        <td><span class="bktcell ${b.cls}">${b.name} ${ib('crpop:'+pk+':'+i)}</span></td>
-        <td class="r">${b.cases.toLocaleString('en-IN')}</td>
-        <td class="r">${b.pos}</td>
-        <td class="r">${b.res}</td>
-      </tr>`).join('');
-    const totalRow = `<tr class="total">
-        <td><span class="bktcell">${p.total.name} ${ib('crpop:'+pk+':total')}</span></td>
-        <td class="r">${p.total.cases.toLocaleString('en-IN')}</td>
-        <td class="r">${p.total.pos}</td>
-        <td class="r">${p.total.res}</td>
-      </tr>`;
-    const bucketHeadHtml = p.bucketHead.map(([label,key])=>`<th${label==='Cases'||label.includes('%')||label==='POS'?' class="r"':''}>${label}${key?ib(key):''}</th>`).join('');
-
-    return `
-    <div class="psumblock">
-      <div class="psum-h">
-        <span class="pdot" style="background:${p.color}"></span>
-        <span class="pname">${p.label}</span>
-        <span class="pagent">agent: ${p.agent}</span>
-      </div>
-      <div class="tileswrap"><div class="tiles">${tilesHtml}</div></div>
-      <div class="panel" style="position:relative">
-        <div class="ptitle">Metrics by ${p.bucketHead[0][0]}</div>
-        <table class="tbl" id="bktTable-${pk}">
-          <thead><tr>${bucketHeadHtml}</tr></thead>
-          <tbody>${bucketRows}${totalRow}</tbody>
-        </table>
-      </div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('productPanels').innerHTML = blocks + `
-    <div class="pop hidden" id="crPop">
-      <button class="pop-x" onclick="closePop()">&times;</button>
-      <div class="pop-h" id="crPopH">Case Resolution</div>
-      <div class="pop-s" id="crPopS">Breakdown for this bucket</div>
-      <div id="crPopBody"></div>
-    </div>`;
-}
-
-/* ===== PRODUCT TABS: case list only (filters + search, matches live Assigned Cases toolbar) ===== */
-function renderCaseList(pk){
-  const p = PRODUCTS[pk];
-  const tblHeadHtml = p.tblHead.map(([label,key],i)=>{
-    const sortable = !['Action','Comments'].includes(label);
-    return `<th>${label}${sortable?'<span class="sorticon">⇕</span>':''}${key?ib(key):''}</th>`;
-  }).join('');
-  const tblRowsHtml = p.rows.map(r=>{
-    const cells = r.map((cell,i)=>{
-      if(isFlowVal(cell)) return `<td><span class="flowchip ${flowChipCls(cell)}">${cell.toUpperCase()}</span></td>`;
-      if(i===0) return `<td class="mono">${cell}</td>`;
-      return `<td>${cell}</td>`;
-    }).join('');
-    return `<tr>${cells}</tr>`;
-  }).join('');
-
-  document.getElementById('productPanels').innerHTML = `
-    <div class="panel">
-      <div class="caselisthead">
-        <div class="ptitle">Assigned Cases (${p.rows.length})</div>
-        <div class="filterbar">
-          <button class="fbtn" onclick="toast('Tags filter')">Tags <span class="car">▾</span></button>
-          <button class="fbtn" onclick="toast('Case Category filter')">Case Category <span class="car">▾</span></button>
-          <button class="fbtn" onclick="toast('More filters')">More Filters <span class="car">▾</span><span class="dot"></span></button>
-          <div class="fsearch"><span class="mag" style="width:13px;height:13px;border:2px solid #B7BCCB;border-radius:50%;position:relative;flex:none"></span>
-            <input placeholder="Filter by User Name or UUID" onkeydown="if(event.key==='Enter')toast('Filtering…')">
-          </div>
-          <button class="frefresh" onclick="toast('Refreshed')">⟲ Refresh Tickets</button>
-        </div>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="tbl">
-          <thead><tr>${tblHeadHtml}</tr></thead>
-          <tbody>${tblRowsHtml}</tbody>
-        </table>
-      </div>
-      <div class="pagerow">
-        <span>Showing page 1 of 1</span>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="pg">&#8249;</span><span class="pg on">1</span><span class="pg">&#8250;</span>
-          <select class="rowselect"><option>Show 10 rows</option><option>Show 25 rows</option><option>Show 50 rows</option></select>
-        </div>
-      </div>
-    </div>`;
-}
-
-function showPop(e,pk,key){
+function closePop(){}
+window.showInfo = function(e){
   e.stopPropagation();
   document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
   e.target.classList.add('on');
-  const p = PRODUCTS[pk];
-  const src = key==='total' ? p.total : p.buckets[key];
-  document.getElementById('crPopH').textContent='Case Resolution · '+p.label+' · '+src.name;
-  document.getElementById('crPopS').textContent='Breakdown for this '+p.bucketHead[0][0].toLowerCase();
-  document.getElementById('crPopBody').innerHTML=Object.entries(src.cr)
-    .map(([k,v])=>`<div class="pr"><span>${k}</span><span class="n">${v.toLocaleString('en-IN')}</span></div>`).join('');
-  const pop=document.getElementById('crPop'); pop.classList.remove('hidden');
-  const panel=e.target.closest('.panel').getBoundingClientRect();
-  const r=e.target.getBoundingClientRect();
-  pop.style.left=Math.min(r.left-panel.left+24, panel.width-310)+'px';
-  pop.style.top=(r.top-panel.top+24)+'px';
-}
-function closePop(){const p=document.getElementById('crPop');if(p)p.classList.add('hidden');}
-
-/* intercept the crpop:product:N info buttons before the generic showInfo handler */
-window.showInfo = function(e){
-  const k = e.target.dataset.k;
-  if(k && k.startsWith('crpop:')){
-    e.stopPropagation();
-    const [,pk,key] = k.split(':');
-    showPop(e, pk, key==='total'?'total':Number(key));
-    return;
-  }
-  document.querySelectorAll('.info').forEach(x=>x.classList.remove('on'));
-  e.target.classList.add('on');
-  const d = INFO[k];
+  const d = INFO[e.target.dataset.k];
   if(!d) return;
   const r = e.target.getBoundingClientRect();
-  let left = Math.min(r.left, window.innerWidth-316);
+  let left = Math.max(8, Math.min(r.left, window.innerWidth-316));
   let top = r.bottom+8;
   if(top+180 > window.innerHeight) top = Math.max(8, r.top-8-190);
   document.getElementById('itipMount').innerHTML = `
@@ -1220,19 +873,6 @@ function submitCollectionTags(){
 }
 function closeModal(){document.getElementById('modalMount').innerHTML='';}
 
-// ===== portfolio download =====
-function downloadPortfolio(){
-  const rows=[['UUID','Customer','Product','Bucket','POS','Due Date','Assigned Agent']];
-  rows.push(['1aa8a820-8bcd-11ec-b470-b392213adebc','—','BORROW','Bkt 6','190000','2026-08-05','sudhansu.sahu.cw']);
-  rows.push(['ae59b276-af7d-48f8-b8a8-43828454b3f3','—','CREDIT_CARD','Bkt 0','274000','2026-08-05','anurag.s.cw']);
-  rows.push(['905f960e-e9de-4b2a-9dca-11c91565e299','—','EDI','DPD 15 to 30','110000','2026-08-05','praveen.jadhav.cw']);
-  rows.push(['006037051000017','—','EDL','SMA - 0','963000','2026-08-05','mukul.moral']);
-  const csv=rows.map(r=>r.join(',')).join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='agent_portfolio_combined.csv';a.click();URL.revokeObjectURL(url);
-  toast('Agent portfolio downloaded (all products)');
-}
-
 // ===== legal tab =====
 function dlDoc(href,name){const x=document.createElement('a');x.href=href;x.download=name;document.body.appendChild(x);x.click();x.remove();toast('Downloading '+name);}
 function genNotice(type){
@@ -1399,8 +1039,8 @@ document.addEventListener('click',(e)=>{if(!e.target.closest('#crPop')&&!e.targe
 document.addEventListener('click',(e)=>{if(!e.target.closest('.itip')&&!e.target.classList.contains('info'))closeInfo();});
 
 // init
-renderPTabs();
-renderMain();
 </script>
+<script src="portfolio-data.js"></script>
+<script src="portfolio.js"></script>
 </body>
 </html>
